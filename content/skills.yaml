@@ -1,0 +1,419 @@
+- id: Python
+  href: https://www.python.org/
+  description: Dynamically typed scripting language
+  category: Languages
+  position:
+    x: 475
+    y: 260
+  links:
+    - Regex
+
+- id: C++
+  href: https://docs.microsoft.com/en-us/cpp/cpp/cpp-language-reference?view=vs-2019
+  description: Strongly typed, high-performance language
+  category: Languages
+  position:
+    x: 480
+    y: -67
+  links: []
+
+- id: JavaScript
+  href: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  description: The language of the web
+  category: Languages
+  position:
+    x: 845
+    y: 420
+  links:
+    - Regex
+
+- id: Regex
+  href: https://en.wikipedia.org/wiki/Regular_expression
+  description: Used to match and modifying text based on patterns
+  category: Languages
+  position:
+    x: 845
+    y: 335
+  links: []
+
+- id: Tableau
+  href: https://www.tableau.com/
+  description: Dashboards & Visualization
+  category: Analytics
+  position:
+    x: 400
+    y: 750
+  links:
+    - Postgres
+    - SQL
+
+- id: Excel
+  href: https://www.microsoft.com/en-us/microsoft-365/excel
+  description: Spreadsheets
+  category: Analytics
+  position:
+    x: 50
+    y: 292
+  links: []
+
+- id: Pandas
+  href: https://pandas.pydata.org/
+  description: Dataframes
+  category: Analytics
+  position:
+    x: 325
+    y: 417
+  links:
+    - Python
+    - Excel
+
+#- id: Forecast Pro
+#  href: https://www.forecastpro.com/
+#  description: Time Series Analysis & Forecasting
+#  category: Analytics
+#  position:
+#    x: -100
+#    y: -100
+#  links: []
+
+#- id: IBM Watson
+#  href: https://www.ibm.com/watson
+#  description: Analytics?
+#  category: Analytics
+#  position:
+#    x: -100
+#    y: -100
+#  links: []
+
+- id: Postgres
+  href: https://www.postgresql.org/
+  description: Open-source Relational Database
+  category: Databases
+  position:
+    x: 350
+    y: 572
+  links:
+    - SQL
+
+- id: Neo4j
+  href: https://neo4j.com/
+  description: Graph database
+  category: Databases
+  position:
+    x: 151
+    y: 149
+  links:
+    - Cypher
+
+- id: SQL
+  href: https://en.wikipedia.org/wiki/SQL
+  description: Structured Query Language
+  category: Databases
+  position:
+    x: 212
+    y: 654
+  links: []
+
+- id: Cypher
+  href: https://neo4j.com/developer/cypher/
+  description: Query Language for Graph Databases
+  category: Databases
+  position:
+    x: 201
+    y: 313
+  links: []
+
+- id: sqlalchemy
+  href: https://www.sqlalchemy.org/
+  description: Object Relational Mapper (ORM) for Relational Databases
+  category: Databases
+  position:
+    x: 212
+    y: 501
+  links:
+    - Python
+    - SQL
+    - Postgres
+
+- id: py2neo
+  href: https://py2neo.org/2020.0/
+  description: Object Relational Mapper for Neo4j
+  category: Databases
+  position:
+    x: 298
+    y: 236
+  links:
+    - Python
+    - Neo4j
+    - Cypher
+
+- id: Pytest
+  href: https://docs.pytest.org/en/stable/
+  description: Unit Testing in Python
+  category: Testing
+  position:
+    x: 544
+    y: 445
+  links:
+    - Python
+
+- id: Hypothesis
+  href: https://hypothesis.readthedocs.io/en/latest/
+  description: Property-based Testing in Python
+  category: Testing
+  position:
+    x: 593
+    y: 563
+  links:
+    - Pytest
+    - Python
+
+- id: Abseil
+  href: https://abseil.io/about/intro
+  description: Parameterized Testing in C++ (among many other things)
+  category: Testing
+  position:
+    x: 660
+    y: -3
+  links:
+    - C++
+
+- id: Selenium
+  href: https://www.selenium.dev/
+  description: Web Automation Framework
+  category: Web Scraping
+  position:
+    x: 739
+    y: 477
+  links:
+    - Python
+    - HTML
+    - CSS
+
+- id: Beautiful Soup
+  href: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+  description: HTML Parser
+  category: Web Scraping
+  position:
+    x: 775
+    y: 230
+  links:
+    - Python
+    - Requests
+    - HTML
+
+- id: Requests
+  href: https://requests.readthedocs.io/en/master/
+  description: Used to request data from APIs
+  category: Web Scraping
+  position:
+    x: 640
+    y: 334
+  links:
+    - Python
+
+- id: Git
+  href: https://git-scm.com/doc
+  description: Version Control System (VCS)
+  category: Version Control
+  position:
+    x: 81
+    y: 181
+  links: []
+
+- id: Github
+  href: https://github.com/
+  description: Source Code Management & Collaboration Platform
+  category: Version Control
+  position:
+    x: 157
+    y: 31
+  links:
+    - Git
+
+- id: Metaflow
+  href: https://metaflow.org/
+  description: Netflix's Workflow Management Tool
+  category: ETL
+  position:
+    x: 439
+    y: 513
+  links:
+    - Python
+    - Pandas
+
+- id: Tableau Prep
+  href: https://www.tableau.com/products/prep
+  description: Graphical Data Munging
+  category: ETL
+  position:
+    x: 495
+    y: 624
+  links:
+    - Tableau
+
+- id: React
+  href: https://reactjs.org/
+  description: Facebook's Component-based Web Framework
+  category: Web Development
+  position:
+    x: 879
+    y: 635
+  links:
+    - JavaScript
+    - JSX
+
+- id: JSX
+  href: https://reactjs.org/docs/jsx-in-depth.html
+  description: JavaScript Extension for React
+  category: Web Development
+  position:
+    x: 960
+    y: 491
+  links:
+    - HTML
+    - CSS
+
+- id: Flask
+  href: https://flask.palletsprojects.com/en/1.1.x/
+  description: Micro-framework for building APIs and webpages
+  category: Web Development
+  position:
+    x: 664
+    y: 163
+  links:
+    - Python
+
+- id: Jinja
+  href: https://jinja.palletsprojects.com/en/2.11.x/
+  description: Template language
+  category: Web Development
+  position:
+    x: 760
+    y: 55
+  links:
+    - Flask
+    - HTML
+
+- id: HTML
+  href: https://developer.mozilla.org/en-US/docs/Web/HTML
+  description: Hypertext Markup Language
+  category: Web Development
+  position:
+    x: 901
+    y: 131
+  links:
+    - CSS
+
+- id: CSS
+  href: https://developer.mozilla.org/en-US/docs/Web/CSS
+  description: Cascading Style Sheets
+  category: Web Development
+  position:
+    x: 989
+    y: 277
+  links: []
+
+- id: OpenSpiel
+  href: https://deepmind.com/research/open-source/openspiel
+  description: Deepmind's library of RL algorithms, environments, and tools
+  category: Reinforcement Learning
+  position:
+    x: 560
+    y: 90
+  links:
+    - C++
+    - Python
+    - Abseil
+
+- id: RLLib
+  href: https://docs.ray.io/en/latest/rllib.html
+  description: Framework for distributed training of RL agents (Built on Ray)
+  category: Reinforcement Learning
+  position:
+    x: 273
+    y: 49
+  links:
+    - Python
+    - OpenAI Gym
+    - Ray
+
+- id: OpenAI Gym
+  href: https://gym.openai.com/
+  description: Library for building single-agent environments
+  category: Reinforcement Learning
+  position:
+    x: 374
+    y: 117
+  links:
+    - Python
+
+- id: spaCy
+  href: https://spacy.io/
+  description: Library for high-performance NLP applications
+  category: Natural Language Processing
+  position:
+    x: 37
+    y: 464
+  links:
+    - Python
+
+- id: Textacy
+  href: https://textacy.readthedocs.io/en/stable/
+  description: Used for topic modeling, keyword extraction, etc.
+  category: Natural Language Processing
+  position:
+    x: 86
+    y: 573
+  links:
+    - spaCy
+    - Python
+
+- id: Sketch
+  href: https://www.sketch.com/
+  description: Vector graphics
+  category: Graphic Design
+  position:
+    x: 694
+    y: 663
+  links:
+    - Framer
+
+- id: Photoshop
+  href: https://www.adobe.com/products/photoshop.html
+  description: Raster graphics
+  category: Graphic Design
+  position:
+    x: 583
+    y: 750
+  links:
+    - Sketch
+
+#- id: Figma
+#  href: https://www.figma.com/
+#  description: Web-based vector graphics & collaboration platform
+#  category: Graphic Design
+#  position:
+#    x: -100
+#    y: -100
+#  links: []
+
+- id: Framer
+  href: https://www.framer.com/
+  description: UI Prototyping
+  category: Graphic Design
+  position:
+    x: 777
+    y: 562
+  links:
+    - React
+
+- id: Ray
+  href: https://docs.ray.io/en/master/index.html
+  description: Distributed computing library
+  category: Distributed Computing
+  position:
+    x: 306
+    y: -28
+  links:
+    - RLLib

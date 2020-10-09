@@ -1,0 +1,14 @@
+:root {
+    --bg-color: black;
+    --main-color: white;
+    --accent-color: #22a6ff;
+}
+
+* {
+    /*background-color: var(--dev-bg);*/
+}
+
+body {
+    background-color: black;
+    margin: min(5vw, 50px);
+}

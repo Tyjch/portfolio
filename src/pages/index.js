@@ -1,22 +1,38 @@
 import React from "react"
-import { Link } from "gatsby"
+import Projects from "../components/project"
+import SkillSection from "../components/skill"
+import ProjectsData from '../../content/projects.yaml'
+import SkillsData from '../../content/skills.yaml'
+import '../styles/global.css'
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
-)
+// import { Waypoint } from "react-waypoint"
+// import Navbar from "../components/navbar"
+// import NavbarData from '../../content/navbar.yaml'
 
-export default IndexPage
+
+function Index() {
+
+  /*function onEnter() {
+    console.log("Entered waypoint");
+  }
+
+  function onLeave() {
+    console.log("Leaving waypoint");
+  }
+
+  const navbar   = <Navbar data={NavbarData} />;*/
+
+  const projects = <Projects data={ProjectsData} />;
+  const skills   = <SkillSection data={SkillsData} />;
+
+  return (
+      <div>
+          {projects}
+          {skills}
+      </div>
+  )
+}
+
+
+export default Index;

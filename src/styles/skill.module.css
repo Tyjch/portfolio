@@ -1,0 +1,59 @@
+.skillSection {
+    position: relative;
+    display: grid;
+    grid-template-columns: 25vw auto;
+    grid-column-gap: 20px;
+    height: 100vh;
+    padding: 50px 0 50px 0;
+    /*overflow-y: scroll;*/
+
+}
+
+.graph {
+    position : -webkit-sticky;
+    position : sticky;
+    top      : 10px;
+    height   : 900px;
+}
+
+
+.content {
+
+}
+
+.category {
+
+}
+
+.title {
+    color: white;
+}
+
+.skills {
+
+}
+
+.skill {
+    color: #ffffff;
+    padding: 0;
+}
+
+.skillTitle {
+    color: white;
+
+}
+
+.skillBody {
+    color: white;
+}
+
+.nodeTitle {
+    padding: 10px;
+    color: white;
+    background-color: #131313;
+    border-style: solid;
+    border-color: white;
+    border-width: 1px;
+    border-radius: 5px;
+}
+

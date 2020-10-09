@@ -1,0 +1,25 @@
+- title : Solitaire AI
+  href : https://github.com/deepmind/open_spiel/pull/196/files
+  src  : https://source.unsplash.com/KKbP7QcE2WU/500x500
+  tags :
+    - C++
+    - Python
+  body : Lorem ipsum
+
+- title : Data Pipeline
+  href : https://github.com
+  src  : https://source.unsplash.com/user/tyjch/likes/
+  tags :
+    - Python
+    - Metaflow
+    - Postgres
+  body : Lorem ipsum
+
+- title : Prerequisite Mining
+  href : https://github.com
+  src  : https://source.unsplash.com/user/tyjch/likes/
+  tags :
+    - Python
+    - Flask
+    - Neo4j
+  body : Lorem ipsum
