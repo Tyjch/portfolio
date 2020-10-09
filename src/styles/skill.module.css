@@ -1,21 +1,16 @@
 .skillSection {
-    position: relative;
     display: grid;
     grid-template-columns: 25vw auto;
     grid-column-gap: 20px;
-    height: 100vh;
     padding: 50px 0 50px 0;
-    /*overflow-y: scroll;*/
-
 }
 
 .graph {
     position : -webkit-sticky;
     position : sticky;
-    top      : 10px;
-    height   : 900px;
+    top      : 0;
+    height   : 100vh;
 }
-
 
 .content {
 

@@ -52,9 +52,9 @@ function getQuadraticBezierPath({ sourceX, sourceY, targetX, targetY, offset=0})
 
 function SkillNode(props) {
   return (
-    <motion.div className={styles.node}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}>
+    <motion.div className  = {styles.node}
+                whileHover = {{ scale: 1.2 }}
+                whileTap   = {{ scale: 0.9 }}>
       <motion.h4 className={styles.title}>
         {props.data.label}
       </motion.h4>

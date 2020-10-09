@@ -1,8 +1,8 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { motion } from "framer-motion"
 import ReactFlow, { Background, isNode } from "react-flow-renderer"
-import { SkillNode, SkillEdge } from "./flow"
-import styles from '../styles/skill.module.css'
+import { SkillEdge, SkillNode } from "./flow"
+import styles from "../styles/skill.module.css"
 
 
 function Category(props) {
@@ -54,9 +54,9 @@ function Skill(props) {
     <motion.div className  = {styles.skill}
                 variants   = {variants}
                 whileTap   = {{ scale: 0.95 }}
-                whileHover = {{ scale: 1.05, marginLeft: '10px' }}
+                whileHover = {{ scale: 1.1, /*marginLeft: '10px'*/ }}
                 animate    = {props.id === props.currentSkill ? 'selected' : 'unselected'}
-                transition = {{ duration: 0.5 }}
+                transition = {{ duration: 0.2 }}
                 onClick    = {(e) => props.handler(props.id, e)}>
 
       <motion.a className = {styles.skillTitle}
@@ -78,6 +78,11 @@ function SkillSection(props) {
 
   const [currentNode, setCurrentNode] = React.useState(null);
   const [elements, setElements] = React.useState(getInitialElements());
+
+  useEffect(
+    () => setElements(getUpdatedElements()),
+    [currentNode]
+  )
 
   // Attributes
 
@@ -112,7 +117,7 @@ function SkillSection(props) {
         source   : source.id,
         target   : target,
         animated : source.id === selectedId || target === selectedId,
-        type     : 'skill'
+        type     : 'smoothstep'
       }))
     });
     return nodes.concat(links);
@@ -132,8 +137,8 @@ function SkillSection(props) {
     return categories;
   }
 
-  function updateElements() {
-    const newElements = elements.map((element) => {
+  function getUpdatedElements() {
+    return elements.map((element) => {
       try {
         // Handles nodes
         element.data.selected = element.id === currentNode
@@ -143,9 +148,7 @@ function SkillSection(props) {
         element.animated = element.source === currentNode || element.target === currentNode;
       }
       return element
-    })
-
-    setElements(newElements);
+    });
   }
 
   // Handlers
@@ -155,15 +158,15 @@ function SkillSection(props) {
   }
 
   function handleElementClick(event, element) {
+    // Triggered when a node or edge is clicked in the graph
     if (isNode(element)) {
       setCurrentNode(element.id)
-      updateElements()
     }
   }
 
   function handleClick(id) {
+    // Triggered when a skill in a category is clicked
     setCurrentNode(id)
-    updateElements()
   }
 
   return (
@@ -194,8 +197,8 @@ function SkillSection(props) {
                  nodesConnectable  = {false}
                  snapToGrid        = {false}
 
-                 onLoad            = {onLoad}
-                 onElementClick    = {(event, element) => handleElementClick(event, element)}
+                 onLoad         = {onLoad}
+                 onElementClick = {(event, element) => handleElementClick(event, element)}
       >
 
         <Background variant="dots" gap={50} size={1} />
