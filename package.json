@@ -48,7 +48,7 @@
     "react-typist": "^2.0.5",
     "react-typography": "^0.16.19",
     "react-waypoint": "^9.0.3",
-    "typed.js": "^2.0.11",
+    "typed.js": "https://github.com/Tyjch/typed.js.git",
     "typeit-react": "^0.1.3",
     "typography": "^0.16.19",
     "typography-theme-fairy-gates": "^0.16.19",
@@ -78,7 +78,7 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
-    "postinstall": "patch-package"
+    "postinstall": "cd ./node_modules/typed.js && npm install && npm run build"
   },
   "repository": {
     "type": "git",

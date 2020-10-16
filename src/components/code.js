@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from "react"
 import Typed from "typed.js"
+import Highlight, { defaultProps } from "prism-react-renderer"
 import DiffMatchPatch from "diff-match-patch"
 
 const diff = new DiffMatchPatch();
+const invisibleChar = '\u2800';
+
+// Relevant HTML Tags
+//  <pre>
+//  <code>
+//  <samp>
+//  <template>
+//  <object>
+
 
 
 function CodeContainer() {
   const [index, setIndex] = React.useState(0);
   const strings = [
-    // `here I am`,
-    // `here we am`,
     `def foo(self, x):
       return x + 1`,
     `def foo(y):
       return y + 1 * 2`,
-    // `def bar(z):
-    //   return z + 1`,
-    // `def bar(z):
-    //   return z`
+    `def foo(y):
+      // some comment here
+      return y + 1 * 2`
   ]
 
   function handleClick() {
@@ -184,9 +191,19 @@ function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
 
   function getStrings() {
     switch (operation) {
-      case  0 : return [`\`${code}\``]
-      case  1 : return [`\`\``, code];
-      case -1 : return [`\`${code}\``, '``'];
+      case  0 : {
+        return  [`\`${code}\``]
+      }
+      case -1 : {
+        return  [`\`${code}\``, "``"]
+     }
+      case  1 : {
+        // This is a hack to get around the fact that typed.js automatically
+        // trims all strings
+        const trimmedCode = code.trimStart();
+        const padding     = invisibleChar.repeat(code.length - trimmedCode.length);
+        return [`\`\``, padding + trimmedCode];
+      }
       default : return [];
     }
   }
@@ -208,10 +225,7 @@ function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
     };
   })
 
-  return (<>
-    <span ref={spanRef} style={{ whitespace: 'pre' }}>
-      {/*{operation === 0 ? '' : code}*/}
-    </span>
+return (<>
     <pre ref={spanRef} style={{ display: 'inline' }}>
       {console.log(`Typer.code:\n "${code}"`)}
       {console.log('getStrings():', getStrings())}
