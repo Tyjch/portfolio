@@ -1,16 +1,55 @@
 .navbar {
-    display: flex;
-    justify-content: flex-end;
+    position         : fixed;
+    background-color : var(--accent-color);
+    width            : 100%;
+    top              : 0;
+    z-index          : 1;
+    height           : 50px;
 }
 
-.link {
+.content {
+    display          : flex;
+    margin-left      : min(5vw, 100px);
+    margin-right     : min(5vw, 100px);
+    align-items      : center;
+    height           : 100%;
+}
 
+.logo {
+    padding   : 10px;
+    color     : white;
+    flex-grow : 0;
+}
+
+.navItems {
+    display          : flex;
+    flex-grow        : 1;
+    justify-content  : flex-end;
+    height           : 100%
+}
+
+.navItem {
+    height              : 100%;
+    border-bottom-style : solid;
+    border-bottom-color : transparent;
+    border-bottom-width : 2px;
 }
 
 .active {
-    background-color: darkorange;
+    border-bottom-style : solid;
+    border-bottom-color : white;
+    border-bottom-width : 2px;
+
 }
 
 .title {
-    color: white;
+    display         : flex;
+    color           : white;
+    margin          : 0;
+    padding         : 0 20px 0 20px;
+    height          : 100%;
+    align-items     : center;
+    justify-content : center;
+
+    text-decoration     : none;
 }

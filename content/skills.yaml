@@ -325,6 +325,7 @@
     - C++
     - Python
     - Abseil
+    - Github
 
 - id: RLLib
   href: https://docs.ray.io/en/latest/rllib.html

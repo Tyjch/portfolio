@@ -1,0 +1,6 @@
+.graph {
+    position : sticky;
+    position : -webkit-sticky;
+    top      : 30px;
+    height   : 100vh;
+}

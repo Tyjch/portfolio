@@ -1,8 +1,9 @@
 .skillSection {
     display: grid;
     grid-template-columns: 25vw auto;
-    grid-column-gap: 20px;
+    grid-column-gap: 50px;
     padding: 50px 0 50px 0;
+    width: 100%;
 }
 
 .graph {

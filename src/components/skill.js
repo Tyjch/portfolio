@@ -1,7 +1,6 @@
-import React, { useEffect } from "react"
+import React, { useState, useRef } from "react"
 import { motion } from "framer-motion"
-import ReactFlow, { Background, isNode } from "react-flow-renderer"
-import { SkillEdge, SkillNode } from "./flow"
+import GraphContainer from "./graph"
 import styles from "../styles/skill.module.css"
 
 
@@ -51,13 +50,14 @@ function Skill(props) {
   }
 
   return (
-    <motion.div className  = {styles.skill}
-                variants   = {variants}
-                whileTap   = {{ scale: 0.95 }}
-                whileHover = {{ scale: 1.1, /*marginLeft: '10px'*/ }}
-                animate    = {props.id === props.currentSkill ? 'selected' : 'unselected'}
-                transition = {{ duration: 0.2 }}
-                onClick    = {(e) => props.handler(props.id, e)}>
+    <motion.div
+      className  = {styles.skill}
+      variants   = {variants}
+      whileTap   = {{ scale: 0.95 }}
+      whileHover = {{ scale: 1.10 }}
+      animate    = {props.id === props.currentSkill ? 'selected' : 'unselected'}
+      transition = {{ duration: 0.2 }}
+      onClick    = {(e) => props.handler(props.id, e)}>
 
       <motion.a className = {styles.skillTitle}
                 href      = {props.href}>
@@ -74,54 +74,10 @@ function Skill(props) {
 
 function SkillSection(props) {
 
-  // Hooks
-
-  const [currentNode, setCurrentNode] = React.useState(null);
-  const [elements, setElements] = React.useState(getInitialElements());
-
-  useEffect(
-    () => setElements(getUpdatedElements()),
-    [currentNode]
-  )
-
-  // Attributes
+  const [currentNode, setCurrentNode] = useState(null);
+  const cyRef = useRef();
 
   const categories = getCategories();
-  const nodeTypes  = {
-    skill: SkillNode
-  };
-  const edgeTypes  = {
-    skill: SkillEdge
-  }
-
-  // Methods
-
-  function getInitialElements(selectedId=null) {
-    const nodes = props.data.map(skill => {
-      return ({
-        id   : skill.id,
-        type : 'skill',
-        data : {
-          label: skill.id,
-          selected: skill.id === selectedId,
-        },
-        position : {
-          x: skill.position.x,
-          y: skill.position.y
-        },
-      })
-    });
-    const links = props.data.flatMap(source => {
-      return source.links.map(target => ({
-        id       : source.id + '->' + target,
-        source   : source.id,
-        target   : target,
-        animated : source.id === selectedId || target === selectedId,
-        type     : 'smoothstep'
-      }))
-    });
-    return nodes.concat(links);
-  }
 
   function getCategories() {
     let categories = new Map(
@@ -137,47 +93,29 @@ function SkillSection(props) {
     return categories;
   }
 
-  function getUpdatedElements() {
-    return elements.map((element) => {
-      try {
-        // Handles nodes
-        element.data.selected = element.id === currentNode
-      } catch {
-        // Handles edges
-        element.animated = false;
-        element.animated = element.source === currentNode || element.target === currentNode;
-      }
-      return element
-    });
-  }
-
-  // Handlers
-
-  function onLoad(reactFlowInstance) {
-    reactFlowInstance.fitView();
-  }
-
-  function handleElementClick(event, element) {
-    // Triggered when a node or edge is clicked in the graph
-    if (isNode(element)) {
-      setCurrentNode(element.id)
-    }
-  }
-
-  function handleClick(id) {
+  function handleSkillClick(id) {
     // Triggered when a skill in a category is clicked
-    setCurrentNode(id)
+    // console.log('EVENT: Clicked skill:', id);
+    cyRef.current.cy.getElementById(currentNode).unselect()
+    cyRef.current.cy.getElementById(id).select()
+    setCurrentNode(id);
+  }
+
+  function handleNodeClick(id) {
+    // Triggered when a node in the graph is clicked
+    // console.log('EVENT: Clicked node:', id);
+    setCurrentNode(id);
   }
 
   return (
     <motion.div className={styles.skillSection}>
 
-      <motion.div className={styles.content}>
+      <motion.div className={styles.content} id={'Skills'}>
         {
           Array.from(categories).map(([key, value]) => (
             <Category title={key}
                       data={value}
-                      handler={handleClick}
+                      handler={handleSkillClick}
                       currentSkill={currentNode}
                       key={key}
             />
@@ -185,28 +123,16 @@ function SkillSection(props) {
         }
       </motion.div>
 
-      <ReactFlow className = {styles.graph}
-                 elements  = {elements}
-                 nodeTypes = {nodeTypes}
-                 edgeTypes = {edgeTypes}
+      <GraphContainer
+        onClick={handleNodeClick}
+        currentNode={currentNode}
+        ref={cyRef}
+      />
 
-                 paneMoveable      = {false}
-                 nodesDraggable    = {true}
-                 zoomOnScroll      = {true}
-                 zoomOnDoubleClick = {false}
-                 nodesConnectable  = {false}
-                 snapToGrid        = {false}
-
-                 onLoad         = {onLoad}
-                 onElementClick = {(event, element) => handleElementClick(event, element)}
-      >
-
-        <Background variant="dots" gap={50} size={1} />
-
-      </ReactFlow>
+      {console.log('Current Node:', currentNode)}
 
     </motion.div>
-  )
+  );
 
 }
 

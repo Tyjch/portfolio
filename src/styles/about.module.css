@@ -1,0 +1,40 @@
+.about {
+    background-color: var(--accent-color);
+    height: 100vh;
+}
+
+.content {
+    padding: 50px;
+}
+
+.title {
+    color  : white;
+    margin : 200px 0 0 min(5vh, 50px);
+}
+
+.subtitle {
+    color   : white;
+    margin  : 0 0 0 min(5vh, 50px);
+    padding : 0 0 20px 0;
+}
+
+.seeMore {
+    position : absolute;
+    bottom   : 10px;
+
+    display         : flex;
+    justify-content : center;
+    align-items     : flex-end;
+
+    height : 50px;
+    width  : 100%;
+}
+
+.arrow {
+
+}
+
+.arrowIcon {
+    color: white;
+}
+

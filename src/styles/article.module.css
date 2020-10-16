@@ -1,0 +1,49 @@
+.article {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+}
+
+.main {
+    background-color: #f4f4f5;
+    height: 100vh;
+}
+
+.body {
+    padding: 50px;
+}
+
+.header {
+    display         : flex;
+    align-content   : center;
+    justify-content : flex-start;
+
+    border-bottom-style : solid;
+    border-bottom-color : rgba(72, 72, 72, 0.1);
+    border-bottom-width : 1px;
+}
+
+.title {
+    color: black;
+}
+
+.section {
+
+}
+
+.sectionTitle {
+
+}
+
+.backButton {
+    color   : white;
+    padding : 50px;
+}
+
+.code {
+    background-color: #171717;
+}
+
+.codeSample {
+    color: darkorange;
+}
+

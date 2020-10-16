@@ -1,8 +1,11 @@
 - title: About
   anchor: about
+  offset: 0
 
 - title: Projects
   anchor: projects
+  offset: -100
 
 - title: Skills
   anchor: skills
+  offset: -40

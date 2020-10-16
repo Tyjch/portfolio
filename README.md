@@ -26,7 +26,7 @@
     - `<footer>`     –– "Defines a footer (copyright, contact info, back to top button, etc.) for a document or section"
     - `<nav>`        –– "Defines a set of navigation links"
     - `<details>`    –– "Defines additional details that the user can view or hide"
-    - `<summary>`    –– "Defines a visible heading for a <details> element"
+    - `<summary>`    –– "Defines a visible heading for an \<details\> element"
     - `<figure>`     –– "Specifies self-contained content, like illustrations, diagrams, photos, code listings, etc."
     - `<figcaption>` –– "Defines a caption for a <figure> element"
   

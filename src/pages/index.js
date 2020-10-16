@@ -1,35 +1,48 @@
 import React from "react"
+import { Element } from 'react-scroll'
+import Navbar from '../components/navbar'
+import About from "../components/about"
 import Projects from "../components/project"
 import SkillSection from "../components/skill"
+import NavbarData from '../../content/navbar.yaml'
 import ProjectsData from '../../content/projects.yaml'
 import SkillsData from '../../content/skills.yaml'
+import AboutData from '../../content/about.yaml'
 import '../styles/global.css'
-
-
-// import { Waypoint } from "react-waypoint"
-// import Navbar from "../components/navbar"
-// import NavbarData from '../../content/navbar.yaml'
 
 
 function Index() {
 
-  /*function onEnter() {
-    console.log("Entered waypoint");
-  }
+  const navbar   = (
+    <Navbar data={NavbarData} />
+  );
 
-  function onLeave() {
-    console.log("Leaving waypoint");
-  }
+  const about = (
+    <Element name={'about'}>
+      <About data={AboutData} />
+    </Element>
+  )
 
-  const navbar   = <Navbar data={NavbarData} />;*/
+  const projects = (
+    <Element name={'projects'}>
+      <Projects data={ProjectsData} />
+    </Element>
+  );
 
-  const projects = <Projects data={ProjectsData} />;
-  const skills   = <SkillSection data={SkillsData} />;
+  const skills   = (
+    <Element name={'skills'}>
+      <SkillSection data={SkillsData} />
+    </Element>
+  );
 
   return (
-      <div>
+      <div className={'index'}>
+        {navbar}
+        {about}
+        <div className={'body'}>
           {projects}
           {skills}
+        </div>
       </div>
   )
 }
