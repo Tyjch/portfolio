@@ -5,6 +5,48 @@ import DiffMatchPatch from "diff-match-patch"
 const diff = new DiffMatchPatch();
 
 
+function CodeContainer() {
+  const [index, setIndex] = React.useState(0);
+  const strings = [
+    // `here I am`,
+    // `here we am`,
+    `def foo(self, x):
+      return x + 1`,
+    `def foo(y):
+      return y + 1 * 2`,
+    // `def bar(z):
+    //   return z + 1`,
+    // `def bar(z):
+    //   return z`
+  ]
+
+  function handleClick() {
+    index === strings.length - 1 ?
+      setIndex(0) :
+      setIndex(index + 1)
+  }
+
+  return (
+    <div style={{ color: 'white', padding: '50px' }}>
+
+      <button
+        onClick={handleClick}
+        style={{ margin: '50px' }}>
+        Cycle
+      </button>
+
+      <Code
+        code={strings[index]}
+        language={'python'}
+        typeSpeed = {100}
+        backSpeed = {100}
+        spacing   = {500}
+      />
+
+    </div>
+  )
+}
+
 function Code(props) {
 
   // PROPS
@@ -123,6 +165,7 @@ function Code(props) {
       {prev_vs_curr}
       {diff_display}
       {typing}
+      {console.log('diffs:', differences)}
     </div>
   )
 }
@@ -142,7 +185,7 @@ function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
   function getStrings() {
     switch (operation) {
       case  0 : return [`\`${code}\``]
-      case  1 : return [`\`${""}\``, code];
+      case  1 : return [`\`\``, code];
       case -1 : return [`\`${code}\``, '``'];
       default : return [];
     }
@@ -165,54 +208,18 @@ function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
     };
   })
 
-  return (
+  return (<>
     <span ref={spanRef} style={{ whitespace: 'pre' }}>
       {/*{operation === 0 ? '' : code}*/}
     </span>
-  )
+    <pre ref={spanRef} style={{ display: 'inline' }}>
+      {console.log(`Typer.code:\n "${code}"`)}
+      {console.log('getStrings():', getStrings())}
+    </pre>
+  </>)
 }
 
-function CodeContainer() {
-  const [index, setIndex] = React.useState(0);
-  const strings = [
-    // `here I am`,
-    // `here we am`,
-    `def foo(self, x):
-      return x + 1`,
-    `def foo(y):
-      return y + 1 * 2`,
-    // `def bar(z):
-    //   return z + 1`,
-    // `def bar(z):
-    //   return z`
-  ]
 
-  function handleClick() {
-    index === strings.length - 1 ?
-      setIndex(0) :
-      setIndex(index + 1)
-  }
-
-  return (
-    <div style={{ color: 'white', padding: '50px' }}>
-
-      <button
-        onClick={handleClick}
-        style={{ margin: '50px' }}>
-        Cycle
-      </button>
-
-      <Code
-        code={strings[index]}
-        language={'python'}
-        typeSpeed = {200}
-        backSpeed = {200}
-        spacing   = {1000}
-      />
-
-    </div>
-  )
-}
 
 
 export default CodeContainer;

@@ -30,6 +30,7 @@
     "gatsby-source-filesystem": "^2.3.32",
     "gatsby-transformer-sharp": "^2.5.16",
     "lodash": "^4.17.20",
+    "patch-package": "^6.2.2",
     "prism-react-renderer": "^1.1.1",
     "prismjs": "^1.22.0",
     "prop-types": "^15.7.2",
@@ -76,7 +77,8 @@
     "start": "npm run develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
+    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
+    "postinstall": "patch-package"
   },
   "repository": {
     "type": "git",

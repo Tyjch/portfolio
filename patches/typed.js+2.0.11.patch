@@ -1,0 +1,14 @@
+diff --git a/node_modules/typed.js/src/initializer.js b/node_modules/typed.js/src/initializer.js
+index 3090a9c..db7ef39 100644
+--- a/node_modules/typed.js/src/initializer.js
++++ b/node_modules/typed.js/src/initializer.js
+@@ -68,7 +68,8 @@ export default class Initializer {
+     self.isPaused = false;
+ 
+     // input strings of text
+-    self.strings = self.options.strings.map((s) => s.trim());
++    // PATCH: No longer trims whitespaces from input strings
++    self.strings = self.options.strings.map((s) => s);
+ 
+     // div containing strings
+     if (typeof self.options.stringsElement === 'string') {
