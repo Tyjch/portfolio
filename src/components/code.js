@@ -1,213 +1,218 @@
-import React from "react"
-import Typist from 'react-typist'
-import TypeIt from "typeit-react"
-import Highlight, { defaultProps } from "prism-react-renderer"
-import theme from "prism-react-renderer/themes/nightOwl"
-// import "react-typist/dist/Typist.css"
+import React, { useEffect, useState } from "react"
+import Typed from "typed.js"
+import DiffMatchPatch from "diff-match-patch"
 
-// region Hidden
+const diff = new DiffMatchPatch();
 
-
-
-// TODO: What happens when a substring doesn't fully encompass its tokens?
-//       e.g ['def', 'func', '(', 'x', ')', ':'] := 'nc(x' -> 'nction(z'
-//       Instead of resulting in ['def', 'function('z', ')', ':'],
-//       It will yield ['def', 'nction(z', ')', ':'] because it drops all
-//       matching tokens.
-
-// endregion
-const example = `
-  class Foo():
-    def __init__(self, bar):
-      self.bar = bar
-    
-    def __repr__(self):
-      return f"Foo(bar={self.bar})"
-    
-    def evaluate(self, z):
-      return self.bar + z
-`
-
-
-function getContentArray(line) {
-  return line.map(token => token.content)
-}
-
-function getContentString(line) {
-  return getContentArray(line).join('')
-}
-
-function getSubstrIndices(string, substr) {
-  // Returns an object containing the first and last indices of `substr`
-  // within `string` such that `string.slice(i, j) === substr`
-
-  const first_index = string.indexOf(substr);
-  const last_index  = string.lastIndexOf(substr) + 1;
-  return { first: first_index, last: last_index };
-}
-
-function getTokenIndex(line, index) {
-  // Given the index of a character in a string, return the index of the
-  // token that it's located within.
-  //
-  //   01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22
-  //   d  e  f     e  v  a  l  u  a  t  e  (  s  e  l  f  ,     z  )  :
-  //   0  0  0  1  2  2  2  2  2  2  2  2  3  4  4  4  4  5  6  6  7  8
-  //
-  //   f(2)  -> 0    ('e' -> 'def')
-  //   f(10) -> 2    ('a' -> 'evaluate')
-  //   f(19) -> 6    ('z' -> ' z')
-
-  let output;
-  let i = 0;
-
-  for (const [tokenIndex, element] of getContentArray(line).entries()) {
-    let j = i + element.length;
-    if (i <= index && index < j) {
-      output = tokenIndex;
-      break;
-    } else {
-      i = j
-    }
-  }
-
-  return output;
-}
-
-function replaceTokens(line, replaceCode, withCode) {
-
-  // Get the string of `line` and find indices of sub-string `replaceCode`
-  const string = getContentString(line);
-  const substrIndices = getSubstrIndices(string, replaceCode);
-
-  // Find indices of TOKENS that contain sub-string `replaceCode`
-  const indices = {
-    first : getTokenIndex(line, substrIndices.first),
-    last  : getTokenIndex(line, substrIndices.last),
-  }
-
-  console.log('string:', string)
-  console.log('substrIndices:', substrIndices)
-
-  // Generate a new token to replace one or more tokens containing `replaceCode`
-  const replacementToken = {
-    types   : ['plain'],
-    content : replaceCode,
-    replace : {
-      replacement : withCode,
-      backspace   : replaceCode.length
-    }
-  }
-
-  // Get the number of tokens to replace
-  // If `last` and `first` are the same index, their difference is 0 which is 1 token
-  // Likewise a difference of n implies n + 1 tokens
-  const deleteCount = indices.last - indices.first + 1
-
-  // This modifies `line` in place, so this function has side effects
-  line.splice(indices.first, deleteCount, replacementToken)
-
-}
-
-
-
-
-
-
-// region Components
-
-function Token(props) {
-
-  // tokenProps - props passed down from `highlight.getTokenProps()`
-  // data - miscellaneous data made in part by me
-
-
-  console.log(props)
-
-  if (props.data.hasOwnProperty('replace')) {
-    return (
-      <Typist className={props.className} style={{ display: 'inline' }}>
-
-        <span className={props.className} style={props.style}>
-          {props.data.content}
-        </span>
-
-        <Typist.Backspace count={props.data.replace.backspace} delay={2000} />
-
-        <span>
-          {props.data.replace.replacement}
-        </span>
-
-      </Typist>
-    )
-  }
-  else {
-    return (
-      <span className={props.className} style={props.style}>
-        {props.children}
-      </span>
-    )
-  }
-
-
-
-}
-
-function CodeLine({code, language, theme, replaceCode, withCode}) {
-  return (
-    <Highlight {...defaultProps}
-               code     = {code}
-               language = {language}
-               theme    = {theme}
-    >
-      {highlight => {
-        let line = highlight.tokens[0];
-        replaceTokens(line, replaceCode, withCode)
-        console.log(getContentString(line))
-
-        return (
-          <pre className={highlight.className} style={highlight.style}>
-            {highlight.tokens.map((line, i) => (
-              <span {...highlight.getLineProps({ line, key: i })}>
-                {line.map((token, key) => (
-
-                  <Token {...highlight.getTokenProps({token, key})}
-                         data  = {token}
-                         key   = {key}
-                  />
-
-                ))}
-              </span>
-            ))}
-          </pre>
-        );
-      }}
-    </Highlight>
-  )
-
-}
 
 function Code(props) {
 
-  // code - the marked up code that we want to display now
-  // language - the language to highlight syntax for
+  // PROPS
+  //  props.prev      – the code before changes are made
+  //  props.curr      - the code after changes are made
+  //  props.typeSpeed - how many ms to type each character
+  //  props.backSpeed - how many ms to perform a backspace
+  //  props.spacing   - how long to pause in between <Typer /> components
+
+  const [prev, setPrev] = useState('')
+  const [curr, setCurr] = useState(props.code)
+
+  const differences  = diff.diff_main(prev, curr);
+  const typerOptions = getTyperOptions();
+
+  useEffect(() => {
+    setPrev(curr)
+    setCurr(props.code)
+  }, [props.code])
+
+  function getTyperOptions() {
+    let offset = 0;
+    const typeSpeed = props.typeSpeed || 0;
+    const backSpeed = props.backSpeed || 0;
+    const spacing   = props.spacing   || 0;
+
+    return differences.map((e, index) => {
+      let delay;
+      const [type, content] = e;
+      switch (type) {
+        case  0 : {
+          delay = 0
+          const options = {
+            typeSpeed  : 0,
+            backSpeed  : 0,
+            startDelay : 0,
+            backDelay  : 0,
+          }
+          offset += delay + spacing
+          return options;
+        }
+        case  1 : {
+          delay = content.length * typeSpeed
+          const options = {
+            typeSpeed  : typeSpeed,
+            backSpeed  : 0,
+            startDelay : offset,
+            backDelay  : 0,
+          }
+          offset += delay + spacing
+          return options;
+        }
+        case -1 : {
+          delay = content.length * backSpeed
+          const options = {
+            typeSpeed  : 0,
+            backSpeed  : backSpeed,
+            startDelay : 0,
+            backDelay  : offset,
+          }
+          offset += delay + spacing
+          return options;
+        }
+      }
+    })
+  }
+
+  // region misc.
+
+  const prev_vs_curr = (<>
+    <h4 style={{ color: 'white' }}>Current Code</h4>
+    <pre style={{ color: 'white' }}>
+      {curr}
+    </pre>
+    <h4 style={{ color: 'white' }}>Previous Code</h4>
+    <pre style={{ color: 'white' }}>
+      {prev}
+    </pre>
+  </>)
+  const diff_display = (<>
+    <h4 style={{ color: 'white' }}>Differences</h4>
+    <pre>
+      {
+        differences.map((e, index) => (
+          <span key={index} style={{ color: e[0] === 0 ? 'white' : e[0] === 1 ? 'blue' : 'red' }} >
+            {e[1]}
+          </span>
+        ))
+      }
+    </pre>
+  </>)
+
+  // endregion
+
+  const typing = (<>
+    <h4 style={{ color: 'white' }}>Animation</h4>
+    <pre>
+      {
+        differences.map((e, index) => {
+          const [type, content] = e;
+          return (
+            <Typer
+              {...typerOptions[index]}
+              code      = {content}
+              operation = {type}
+              key       = {index}
+            />
+          )
+        })
+      }
+    </pre>
+  </>)
 
   return (
-    <CodeLine code={'def evaluate(self, foo):'}
-              replaceCode={' foo'}
-              withCode={' bar'}
-              language={'python'}
-              theme={theme}
-    />
+    <div>
+      {prev_vs_curr}
+      {diff_display}
+      {typing}
+    </div>
+  )
+}
+
+function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
+
+  // PROPS
+  //  code       - the code to be typed
+  //  operation  - 0: just display code, 1: insert code, -1: remove code
+  //  typeSpeed  - how many ms to type each character
+  //  backSpeed  - how many ms to perform a backspace
+  //  startDelay – how long to wait in ms before typing
+  //  backDelay  – how long to wait in ms before deleting
+
+  const spanRef = React.useRef(null)
+
+  function getStrings() {
+    switch (operation) {
+      case  0 : return [`\`${code}\``]
+      case  1 : return [`\`${""}\``, code];
+      case -1 : return [`\`${code}\``, '``'];
+      default : return [];
+    }
+  }
+
+  React.useEffect(() => {
+    const options = {
+      typeSpeed      : typeSpeed  || 0,
+      backSpeed      : backSpeed  || 0,
+      startDelay     : startDelay || 0,
+      backDelay      : backDelay  || 0,
+      smartBackspace : true,
+      loop           : false,
+      showCursor     : false,
+      strings        : getStrings(),
+    }
+    const typed = new Typed(spanRef.current, options);
+    return () => {
+      typed.destroy()
+    };
+  })
+
+  return (
+    <span ref={spanRef} style={{ whitespace: 'pre' }}>
+      {/*{operation === 0 ? '' : code}*/}
+    </span>
   )
 }
 
 function CodeContainer() {
+  const [index, setIndex] = React.useState(0);
+  const strings = [
+    // `here I am`,
+    // `here we am`,
+    `def foo(self, x):
+      return x + 1`,
+    `def foo(y):
+      return y + 1 * 2`,
+    // `def bar(z):
+    //   return z + 1`,
+    // `def bar(z):
+    //   return z`
+  ]
+
+  function handleClick() {
+    index === strings.length - 1 ?
+      setIndex(0) :
+      setIndex(index + 1)
+  }
+
   return (
-    <Code code={example} language={'python'} />
+    <div style={{ color: 'white', padding: '50px' }}>
+
+      <button
+        onClick={handleClick}
+        style={{ margin: '50px' }}>
+        Cycle
+      </button>
+
+      <Code
+        code={strings[index]}
+        language={'python'}
+        typeSpeed = {200}
+        backSpeed = {200}
+        spacing   = {1000}
+      />
+
+    </div>
   )
 }
 
-// endregion
 
 export default CodeContainer;
