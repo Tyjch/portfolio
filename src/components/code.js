@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from "react"
-import Typed from "typed.js"
-import Highlight, { defaultProps } from "prism-react-renderer"
-import DiffMatchPatch from "diff-match-patch"
+import React, { useEffect, useState, useRef } from "react";
+import Typed from "typed.js";
+import DiffMatchPatch from "diff-match-patch";
+import Prism from "prismjs";
+import "prismjs/themes/prism-tomorrow.css";
 
-const diff = new DiffMatchPatch();
+// region Constants
+
+const diff          = new DiffMatchPatch();
 const invisibleChar = '\u2800';
 
-// Relevant HTML Tags
-//  <pre>
-//  <code>
-//  <samp>
-//  <template>
-//  <object>
-
-
+// endregion
 
 function CodeContainer() {
+  // A component for easily testing input to the `Code` prop by providing
+  // some sample content and a button to toggle through them.
+
   const [index, setIndex] = React.useState(0);
   const strings = [
-    `def foo(self, x):
-      return x + 1`,
-    `def foo(y):
-      return y + 1 * 2`,
-    `def foo(y):
-      // some comment here
-      return y + 1 * 2`
+    `function foo(x) {
+  return x + 1;
+}`,
+    `function bar(self, y) {
+  return y + 1 * 2;
+}`,
   ]
 
   function handleClick() {
@@ -43,11 +41,11 @@ function CodeContainer() {
       </button>
 
       <Code
-        code={strings[index]}
-        language={'python'}
-        typeSpeed = {100}
-        backSpeed = {100}
-        spacing   = {500}
+        code      = {strings[index]}
+        language  = {'language-js'}
+        typeSpeed = {50}
+        backSpeed = {50}
+        spacing   = {50}
       />
 
     </div>
@@ -57,22 +55,26 @@ function CodeContainer() {
 function Code(props) {
 
   // PROPS
-  //  props.prev      – the code before changes are made
-  //  props.curr      - the code after changes are made
+  //  props.code      - the code after changes are made
+  //  props.language  - the language to highlight with
   //  props.typeSpeed - how many ms to type each character
   //  props.backSpeed - how many ms to perform a backspace
   //  props.spacing   - how long to pause in between <Typer /> components
 
-  const [prev, setPrev] = useState('')
-  const [curr, setCurr] = useState(props.code)
+  const [prev, setPrev] = useState('');
+  const [curr, setCurr] = useState(props.code);
 
   const differences  = diff.diff_main(prev, curr);
   const typerOptions = getTyperOptions();
 
   useEffect(() => {
-    setPrev(curr)
-    setCurr(props.code)
-  }, [props.code])
+    Prism.highlightAll()
+  });
+
+  useEffect(() => {
+    setPrev(curr);
+    setCurr(props.code);
+  }, [props.code]);
 
   function getTyperOptions() {
     let offset = 0;
@@ -80,104 +82,88 @@ function Code(props) {
     const backSpeed = props.backSpeed || 0;
     const spacing   = props.spacing   || 0;
 
-    return differences.map((e, index) => {
+    return differences.map((e) => {
       let delay;
+      let options;
       const [type, content] = e;
       switch (type) {
         case  0 : {
           delay = 0
-          const options = {
+          options = {
             typeSpeed  : 0,
             backSpeed  : 0,
             startDelay : 0,
             backDelay  : 0,
           }
           offset += delay + spacing
-          return options;
+          break;
         }
         case  1 : {
           delay = content.length * typeSpeed
-          const options = {
+          options = {
             typeSpeed  : typeSpeed,
             backSpeed  : 0,
             startDelay : offset,
             backDelay  : 0,
           }
           offset += delay + spacing
-          return options;
+          break;
         }
         case -1 : {
           delay = content.length * backSpeed
-          const options = {
+          options = {
             typeSpeed  : 0,
             backSpeed  : backSpeed,
             startDelay : 0,
             backDelay  : offset,
           }
           offset += delay + spacing
-          return options;
+          break;
+        }
+        default : {
+          // TODO: Raise an error here
+          options = {
+            typeSpeed  : 0,
+            backSpeed  : 0,
+            startDelay : 0,
+            backDelay  : 0,
+          }
+          break;
         }
       }
+      return options;
     })
   }
 
-  // region misc.
-
-  const prev_vs_curr = (<>
-    <h4 style={{ color: 'white' }}>Current Code</h4>
-    <pre style={{ color: 'white' }}>
-      {curr}
-    </pre>
-    <h4 style={{ color: 'white' }}>Previous Code</h4>
-    <pre style={{ color: 'white' }}>
-      {prev}
-    </pre>
-  </>)
-  const diff_display = (<>
-    <h4 style={{ color: 'white' }}>Differences</h4>
-    <pre>
-      {
-        differences.map((e, index) => (
-          <span key={index} style={{ color: e[0] === 0 ? 'white' : e[0] === 1 ? 'blue' : 'red' }} >
-            {e[1]}
-          </span>
-        ))
-      }
-    </pre>
-  </>)
-
-  // endregion
-
-  const typing = (<>
-    <h4 style={{ color: 'white' }}>Animation</h4>
-    <pre>
-      {
-        differences.map((e, index) => {
-          const [type, content] = e;
-          return (
-            <Typer
-              {...typerOptions[index]}
-              code      = {content}
-              operation = {type}
-              key       = {index}
-            />
-          )
-        })
-      }
-    </pre>
-  </>)
-
   return (
     <div>
-      {prev_vs_curr}
-      {diff_display}
-      {typing}
-      {console.log('diffs:', differences)}
+      <h4 style={{ color: 'white' }}>
+        Animation
+      </h4>
+
+      <pre>
+        {
+          differences.map((e, index) => {
+            const [type, content] = e;
+            return (
+              <Typer
+                {...typerOptions[index]}
+                code      = {content}
+                operation = {type}
+                language  = {props.language}
+                key       = {index}
+              >
+              </Typer>
+            )
+          })
+        }
+      </pre>
     </div>
-  )
+  );
+
 }
 
-function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
+function Typer({code, operation, language, typeSpeed, backSpeed, startDelay, backDelay}) {
 
   // PROPS
   //  code       - the code to be typed
@@ -187,7 +173,7 @@ function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
   //  startDelay – how long to wait in ms before typing
   //  backDelay  – how long to wait in ms before deleting
 
-  const spanRef = React.useRef(null)
+  const codeRef = useRef(null)
 
   function getStrings() {
     switch (operation) {
@@ -217,23 +203,29 @@ function Typer({code, operation, typeSpeed, backSpeed, startDelay, backDelay}) {
       smartBackspace : true,
       loop           : false,
       showCursor     : false,
+      autoInsertCss  : false,
       strings        : getStrings(),
+      onStringTyped  : (() => {
+        Prism.highlightElement(codeRef.current)
+      })
     }
-    const typed = new Typed(spanRef.current, options);
+    const typed = new Typed(codeRef.current, options);
+    Prism.highlightAll()
     return () => {
       typed.destroy()
     };
   })
 
-return (<>
-    <pre ref={spanRef} style={{ display: 'inline' }}>
-      {console.log(`Typer.code:\n "${code}"`)}
-      {console.log('getStrings():', getStrings())}
-    </pre>
+  return (<>
+    <code
+      ref       = {codeRef}
+      className = {language}
+      style     = {{ display: 'inline' }}
+    >
+    </code>
   </>)
+
 }
-
-
 
 
 export default CodeContainer;

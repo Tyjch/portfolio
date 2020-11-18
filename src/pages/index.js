@@ -38,11 +38,11 @@ function Index() {
   return (
       <div className={'index'}>
         {navbar}
-        {about}
-        <div className={'body'}>
-          {projects}
-          {skills}
-        </div>
+          {about}
+          <div className={'body'}>
+            {projects}
+            {skills}
+          </div>
       </div>
   )
 }
