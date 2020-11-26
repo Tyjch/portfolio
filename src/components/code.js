@@ -1,260 +1,114 @@
-import React, { useEffect, useState, useRef } from "react";
-import Typed from "typed.js";
+import React, {useEffect, useRef, useState} from "react";
+import TypeIt from "typeit";
 import DiffMatchPatch from "diff-match-patch";
 import Prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
 
-// region Constants
 
-const diff          = new DiffMatchPatch();
-const invisibleChar = '\u2800';
+const differ = new DiffMatchPatch();
 
-// endregion
+function Coder(props) {
 
-function CodeContainer() {
+  // region Props & State
+  // props.code     - the new text to animate with TypeIt
+  // props.language - the language to highlight the text with
 
-  // DESCRIPTION
-  // A component for easily testing input to the `Code` prop by providing
-  // some sample content and a button to toggle through them. Will not be used
-  // in final version of the site; it's for development purposes only
+  const typeItRef = useRef(null);   // Instance of TypeIt
+  const codeRef   = useRef(null);   // Element that contains text to highlight
+  const prismRef  = useRef(null);   // Contains the highlighted elements
 
-  const [index, setIndex] = React.useState(0);
-  const strings = [
-    `function foo(x) {
-  return x + 1;
-}`,
-    `function bar(self, y) {
-  return y + 1 * 2;
-}`,
-  ]
+  const [running, setRunning] = useState(false);  // Whether TypeIt is still executing the animation
 
-  function handleClick() {
-    index === strings.length - 1 ?
-      setIndex(0) :
-      setIndex(index + 1)
-  }
 
-  return (
-    <div style={{ color: 'white', padding: '50px' }}>
-
-      <button
-        onClick={handleClick}
-        style={{ margin: '50px' }}>
-        Cycle
-      </button>
-
-      <Code
-        code      = {strings[index]}
-        language  = {'language-js'}
-        typeSpeed = {200}
-        backSpeed = {200}
-        spacing   = {200}
-      />
-
-    </div>
-  )
-}
-
-function Code(props) {
-
-  // DESCRIPTION
-  // Provides a "typewriter" effect with syntax highlighting.
-  // Uses a declarative approach; you just provide what you want the component
-  // to display and it calculates diffs from the pre-existing content (if any)
-  // and uses that to decide what to edit. The diffs are passed on to `Typer`
-  // components that handle one specific operation code as defined by the diff.
-
-  // IMPLEMENTATION
-  // A ref to the <pre> tag is passed along to `Typer` children so that they
-  // can recalculate highlights for the entire content, rather than just the
-  // diff they are typing.
-
-  // PROPS
-  //  props.code      - the code after changes are made
-  //  props.language  - the language to highlight with
-  //  props.typeSpeed - how many ms it takes to type each character
-  //  props.backSpeed - how many ms it takes to perform a backspace
-  //  props.spacing   - how long in ms to pause in between <Typer /> components
-
-  const [prev, setPrev] = useState('');
-  const [curr, setCurr] = useState(props.code);
-
-  const differences  = diff.diff_main(prev, curr);
-  const typerOptions = getTyperOptions();
+  // endregion
 
   useEffect(() => {
-    Prism.highlightAll()
-  });
+    console.log('%cEFFECT: Code changed', 'color:green');
 
-  useEffect(() => {
-    setPrev(curr);
-    setCurr(props.code);
-  }, [props.code]);
+    if (!running) {
+      let prev = codeRef.current.textContent;
+      let diff = differ.diff_main(prev, props.code);
+      let flag = prev.length === 0;
 
-  function getTyperOptions() {
-    let offset = 0;
-    const typeSpeed = props.typeSpeed || 0;
-    const backSpeed = props.backSpeed || 0;
-    const spacing   = props.spacing   || 0;
+      typeItRef.current = new TypeIt(codeRef.current, {
+        strings          : [],
+        startDelay       : 0,
+        nextStringDelay  : 750,
+        loopDelay        : 750,
+        speed            : 0,
+        deleteSpeed      : 20,
+        cursorSpeed      : 1000,
+        cursorChar       : "\u2038",
+        cursor           : true,
+        lifeLike         : true,
+        breakLines       : true,
+        startDelete      : false,
+        loop             : false,
+        html             : true,
+        waitUntilVisible : false,
 
-    return differences.map((e) => {
-      let delay;
-      let options;
-      const [type, content] = e;
-      switch (type) {
-        case  0 : {
-          delay = 0
-          options = {
-            typeSpeed  : 0,
-            backSpeed  : 0,
-            startDelay : 0,
-            backDelay  : 0,
+        beforeStep       : (step, instance) => {
+          // If not already running, set running to true before executing the step
+          if (!running) {
+            setRunning(true);
           }
-          offset += delay + spacing
-          break;
-        }
-        case  1 : {
-          delay = content.length * typeSpeed
-          options = {
-            typeSpeed  : typeSpeed,
-            backSpeed  : 0,
-            startDelay : offset,
-            backDelay  : 0,
+          if (flag) {
+            prismRef.current.textContent = codeRef.current.textContent;
+            Prism.highlightElement(prismRef.current);
           }
-          offset += delay + spacing
-          break;
-        }
-        case -1 : {
-          delay = content.length * backSpeed
-          options = {
-            typeSpeed  : 0,
-            backSpeed  : backSpeed,
-            startDelay : 0,
-            backDelay  : offset,
+        },
+        afterStep        : (step, instance) => {
+
+        },
+        afterString      : (step, instance) => {
+          // Takes time to re-type the previous string because TypeIt insists on clearing everything first
+          // We set the flag to true when we wish to start propagating the changes to the prismRef
+          flag = true;
+        },
+        afterComplete    : (step, instance) => {
+          console.log('%cafterComplete()', 'color:blue');
+          setRunning(false);
+          instance.destroy();
+        },
+      });
+
+      codeRef.current.textContent = prev;
+      typeItRef.current.reset();
+      typeItRef.current.move('START', {speed: 0});
+
+      for (const d of diff) {
+        const [op, text] = d;
+        switch (op) {
+          case  0 : {
+            console.log(`%cMOVE   : ${text.length}`, 'color:red');
+            typeItRef.current = typeItRef.current.move(text.length, {speed: 200});
+            break;
           }
-          offset += delay + spacing
-          break;
-        }
-        default : {
-          // TODO: Raise an error here
-          options = {
-            typeSpeed  : 0,
-            backSpeed  : 0,
-            startDelay : 0,
-            backDelay  : 0,
+          case  1 : {
+            console.log(`%cINSERT : ${text}`, 'color:red');
+            typeItRef.current = typeItRef.current.type(text, {speed: 80});
+            break;
           }
-          break;
+          case -1 : {
+            console.log(`%cDELETE : ${text}`, 'color:red');
+            typeItRef.current = typeItRef.current.move(text.length, {speed: 80}).delete(text.length, {speed: 80});
+            break;
+          }
+          default : {
+            break;
+          }
         }
       }
-      return options;
-    })
-  }
 
-  return (
-    <div>
-      <h4 style={{ color: 'white' }}>
-        Animation
-      </h4>
-
-      <pre>
-        {
-          differences.map((e, index) => {
-            const [type, content] = e;
-            return (
-              <Typer
-                {...typerOptions[index]}
-                code      = {content}
-                operation = {type}
-                language  = {props.language}
-                key       = {index}
-              >
-              </Typer>
-            )
-          })
-        }
-      </pre>
-    </div>
-  );
-
-}
-
-function Typer({code, operation, language, typeSpeed, backSpeed, startDelay, backDelay}) {
-
-  // DESCRIPTION
-  // Executes the typing animation from a diff calculated by a `Code` component
-  // (specified by `code` & `operation` props) and highlighted in the language
-  // specified by the `language` prop.
-
-  // IMPLEMENTATION
-  // Each diff has exactly one associated operation:
-  //   0 : leave text as is (e.g. "def foo(x)" -> "def foo(x)"
-  //   1 : insert text (e.g. "" -> "def foo(x)")
-  //  -1 : delete text (e.g. "def foo(x)" -> "")
-  //
-  // Note that insertion always starts from an empty string and that deletion
-  // always results in an empty string.
-
-  // PROPS
-  //  code       - the text to be displayed, inserted or deleted
-  //  operation  - 0: just display code, 1: insert code, -1: remove code
-  //  typeSpeed  - how many ms to type each character
-  //  backSpeed  - how many ms to perform a backspace
-  //  startDelay – how long to wait in ms before typing
-  //  backDelay  – how long to wait in ms before deleting
-
-  const codeRef = useRef(null)
-
-  function getStrings() {
-    switch (operation) {
-      case  0 : {
-        return  [`\`${code}\``]
-      }
-      case -1 : {
-        return  [`\`${code}\``, "``"]
-     }
-      case  1 : {
-        // This is a hack to get around the fact that typed.js automatically
-        // trims all strings
-        const trimmedCode = code.trimStart();
-        const padding     = invisibleChar.repeat(code.length - trimmedCode.length);
-        return [`\`\``, padding + trimmedCode];
-      }
-      default : return [];
+      typeItRef.current.go();
     }
-  }
 
-  React.useEffect(() => {
-    const options = {
-      typeSpeed      : typeSpeed  || 0,
-      backSpeed      : backSpeed  || 0,
-      startDelay     : startDelay || 0,
-      backDelay      : backDelay  || 0,
-      smartBackspace : true,
-      loop           : false,
-      showCursor     : false,
-      autoInsertCss  : false,
-      strings        : getStrings(),
-      onStringTyped  : (() => {
-        Prism.highlightElement(codeRef.current)
-      })
-    }
-    const typed = new Typed(codeRef.current, options);
-    Prism.highlightAll()
-    return () => {
-      typed.destroy()
-    };
-  })
+  }, [props.code])
 
   return (<>
-    <code
-      ref       = {codeRef}
-      className = {language}
-      style     = {{ display: 'inline' }}
-    >
-    </code>
-  </>)
-
+    <pre><code ref={codeRef} style={{display: 'none'}} /></pre>
+    <pre><code className={props.language} ref={prismRef} /></pre>
+  </>);
 }
 
-
-export default CodeContainer;
+export default Coder;

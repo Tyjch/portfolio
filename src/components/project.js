@@ -12,7 +12,7 @@ function Project(props) {
 
   // title - the title of the project
   // href  - an external link to github
-  // src   - an image relating to the project
+  // link  - a link to the project page
   // tags  - relevant technologies used
 
   function handleEnter() {
@@ -24,11 +24,12 @@ function Project(props) {
   }
 
   return (
-    <Waypoint onEnter={() => handleEnter}
-              onLeave={() => handleLeave}>
+    <Waypoint
+      onEnter={() => handleEnter}
+      onLeave={() => handleLeave}
+    >
 
-      <Link to={"/article/"}>
-
+      <Link to={props.link}>
         <motion.div className={styles.project}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}>
@@ -73,20 +74,18 @@ function Projects(props) {
     <div>
       <motion.div className={styles.projects}>
         <Element id={"projects"} name={"projects"}>
-
           {
             props.data.map((project) => (
-              <Project title={project.title}
-                       href={project.href}
-                       src={project.src}
-                       tags={project.tags}
-                       key={project.title}
+              <Project title = {project.title}
+                       href  = {project.href}
+                       link  = {project.link}
+                       tags  = {project.tags}
+                       key   = {project.title}
               >
                 <Lorem count={1} />
               </Project>
             ))
           }
-
         </Element>
       </motion.div>
     </div>

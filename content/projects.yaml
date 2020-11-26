@@ -1,6 +1,6 @@
 - title : Solitaire AI
   href : https://github.com/deepmind/open_spiel/pull/196/files
-  src  : https://source.unsplash.com/KKbP7QcE2WU/500x500
+  link : /projects/solitaire-ai/
   tags :
     - C++
     - Python
@@ -8,7 +8,7 @@
 
 - title : Data Pipeline
   href : https://github.com
-  src  : https://source.unsplash.com/user/tyjch/likes/
+  link : /projects/data-pipeline/
   tags :
     - Python
     - Metaflow
@@ -17,7 +17,7 @@
 
 - title : Prerequisite Mining
   href : https://github.com
-  src  : https://source.unsplash.com/user/tyjch/likes/
+  link : /projects/prerequisite-mining/
   tags :
     - Python
     - Flask
