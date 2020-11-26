@@ -3,33 +3,22 @@
 }
 
 .article {
-
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
 }
 
 .page {
-    margin : 50px;
-    display: grid;
-    grid-template-columns : repeat(2, 50%);
-
 }
 
 .content {
-
+    padding: 50px;
 }
 
 .sidebar {
-    padding          : 0;
-    height           : 100vh;
-
-    background-color : #2d2d2d;
 }
 
 .title {
     color : white;
-}
-
-.pageNav {
-
 }
 
 .paragraph {

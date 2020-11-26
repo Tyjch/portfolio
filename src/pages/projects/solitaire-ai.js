@@ -1,76 +1,52 @@
-import React, { useState, useEffect } from "react";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import Coder from "../../components/code"
+import React, { useState, createContext } from "react";
 import styles from '../../styles/article.module.css'
+import Coder from "../../components/code"
 
+
+const CodeContext = createContext({
+  setContext : () => {},
+})
 
 function Article(props) {
-
-  // PROPS
-  //  props.pages
-
-  const [pageIndex, setPageIndex] = useState(0);
-
-  function incrementIndex() {
-    // Increments `pageIndex` by 1, up to the last index of `props.pages`
-    setPageIndex((Math.min(pageIndex + 1, props.pages.length - 1)));
-  }
+  const [index, setIndex] = useState(0);
+  const [code, setCode] = useState('console.log("Article");');
+  const [lang, setLang] = useState('language-js');
 
   function decrementIndex() {
-    // Decrements `pageIndex` by 1, but not past 0
-    setPageIndex(Math.max(0, pageIndex - 1));
+    setIndex(Math.max(0, index - 1));
   }
 
-  useEffect(() => {
-    // If `props.pages` changes, reset `pageIndex` to 0
-    setPageIndex(0);
-  }, [props.pages])
+  function incrementIndex() {
+    setIndex(Math.min(index + 1, props.pages.length - 1))
+  }
 
   return (
     <div className={styles.article}>
-      {props.pages[pageIndex]}
-      <div className={styles.pageNav}>
-        <button onClick={decrementIndex}> <MdKeyboardArrowLeft /> </button>
-        <button onClick={incrementIndex}> <MdKeyboardArrowRight /> </button>
+      <div className={styles.content}>
+        {props.pages[index]}
+        <button onClick={decrementIndex}> Back </button>
+        <button onClick={incrementIndex}> Next </button>
+      </div>
+      <div className={styles.sidebar}>
+        <Coder language={lang} code={code} />
       </div>
     </div>
   );
-
 }
 
 function Page(props) {
-
-  // PROPS
-  //  props.title
-  //  props.children
-
-  const [code, setCode] = useState({
-    lang : 'language-js',
-    text : `function foo(x) {
-  return x + 1;
-}`
-  });
-
   return (
-    <div className={styles.page}>
-      <div className={styles.content}>
-        <h2 className={styles.title}> {props.title} </h2>
-        {props.children}
-      </div>
-      <div className={styles.sidebar}>
-        <Coder language={code.lang} code={code.text} />
-      </div>
+    <div>
+      <h2 className={styles.title}> {props.title} </h2>
+      {props.children}
     </div>
-  );
+  )
 }
 
 function Paragraph(props) {
-  // PROPS
-  //  props.children
-  //  props.code
 
   function handleClick() {
-    console.log('EVENT: Paragraph clicked');
+    console.log('Paragraph clicked');
   }
 
   return (
@@ -186,6 +162,5 @@ enum class RankType {
   ]
   return <Article title={'Solitaire AI'} pages={pages} />
 }
-
 
 export default SolitaireAI;
