@@ -1,0 +1,23 @@
+toc:
+  pages:
+    - text     : Introduction
+      anchor   : '#introduction'
+    - text     : Support Classes
+      anchor   : '#support-classes'
+      sections :
+        - text     : Cards
+          anchor   : '#cards'
+
+        - text     : Piles
+          anchor   : '#piles'
+          sections :
+            - text   : Tableaus
+              anchor : '#tableaus'
+            - text   : Foundations
+              anchor : '#foundations'
+            - text   : Waste
+              anchor : '#waste'
+
+        - text     : Moves
+          anchor   : '#moves'
+

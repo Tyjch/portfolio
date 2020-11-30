@@ -1,4 +1,5 @@
 import React, { useState, createContext } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
 import styles from '../../styles/article.module.css'
 import Coder from "../../components/code"
 
@@ -7,10 +8,11 @@ const CodeContext = createContext({
   setContext : () => {},
 })
 
+
 function Article(props) {
   const [index, setIndex] = useState(0);
-  const [code, setCode] = useState('console.log("Article");');
-  const [lang, setLang] = useState('language-js');
+  const [code,  setCode]  = useState('console.log("Article");');
+  const [lang,  setLang]  = useState('language-js');
 
   function decrementIndex() {
     setIndex(Math.max(0, index - 1));
@@ -20,16 +22,36 @@ function Article(props) {
     setIndex(Math.min(index + 1, props.pages.length - 1))
   }
 
+  function setContext(lang, text) {
+    console.log('setContext called');
+    setLang(lang);
+    setCode(text);
+  }
+
+  const content    = (<>
+    <div className={styles.content}>
+      <CodeContext.Provider value={{setContext: setContext}}>
+        {props.pages[index]}
+      </CodeContext.Provider>
+    </div>
+  </>);
+  const sidebar    = (<>
+    <div className={styles.sidebar}>
+      <Coder language={lang} code={code} />
+    </div>
+  </>);
+  const navigation = (<>
+    <div className={styles.navigation}>
+      <FaArrowLeft color={'red'} onClick={decrementIndex} />
+      <FaArrowRight color={'red'} onClick={incrementIndex} />
+    </div>
+  </>);
+
   return (
     <div className={styles.article}>
-      <div className={styles.content}>
-        {props.pages[index]}
-        <button onClick={decrementIndex}> Back </button>
-        <button onClick={incrementIndex}> Next </button>
-      </div>
-      <div className={styles.sidebar}>
-        <Coder language={lang} code={code} />
-      </div>
+      {content}
+      {sidebar}
+      {navigation}
     </div>
   );
 }
@@ -45,15 +67,33 @@ function Page(props) {
 
 function Paragraph(props) {
 
-  function handleClick() {
-    console.log('Paragraph clicked');
+  let lang = ''
+  let text = ''
+  if (typeof(props.code) !== "undefined") {
+    lang = props.code.lang;
+    text = props.code.text;
   }
 
   return (
-    <p className={styles.paragraph} onClick={handleClick}>
-      {props.children}
-    </p>
-  )
+    <CodeContext.Consumer>
+      {({ setContext }) => {
+        if (props.code) {
+          return (
+            <p className = {styles.paragraph}
+               onClick   = {() => setContext(lang, text)}>
+              {props.children}
+            </p>
+          )
+        } else {
+          return (
+            <p className = {styles.paragraph}>
+              {props.children}
+            </p>
+          )
+        }
+      }}
+    </CodeContext.Consumer>
+  );
 }
 
 
@@ -105,59 +145,67 @@ function SolitaireAI() {
         <h3 className={styles.title}> Cards </h3>
         <Paragraph code={{
           lang : 'language-cpp',
-          text : `enum class SuitType {
-  kNone = 0,
-  kSpades,
-  kHearts,
-  kClubs,
-  kDiamonds,
-  kHidden,
-};
+          text : `// Main constructor, using rank & suit rather than an index
+Card::Card(bool hidden, SuitType suit, RankType rank, LocationType location)
+    : rank_(rank), suit_(suit), location_(location), hidden_(hidden) {}
+    
+// Alternate constructor, converts an index into a rank & suit first
+Card::Card(int index, bool hidden, LocationType location)
+    : location_(location), hidden_(hidden), index_(index) {...}
+`
+        }}>
+          Cards are essentially defined by their rank and suit (which can be
+          represented as an integer) and whether they are hidden or not.
+          Although the location of a card within a state should technically
+          belong to the <code>SolitaireState</code> class, in this instance
+          it's helpful to keep it within this class instead.
+        </Paragraph>
+        <Paragraph code={{
+          lang : 'language-cpp',
+          text : `std::vector<Card> Card::LegalChildren() const {
+  if (hidden_) {
+    return {};
+  } else {
+    RankType child_rank;
+    std::vector<SuitType> child_suits;
 
-enum class RankType {
-  kNone = 0,
-  kA,
-  k2,
-  k3,
-  k4,
-  k5,
-  k6,
-  k7,
-  k8,
-  k9,
-  kT,
-  kJ,
-  kQ,
-  kK,
-  kHidden,
-};`
+    // An empty tableau card can accept a king of any suit
+    child_suits.reserve(4);
+
+    switch (location_) {
+      case LocationType::kTableau: {...}
+      case LocationType::kFoundation: {...}
+      default: {
+        return {};
+      }
+    }
+
+    std::vector<Card> legal_children;
+    legal_children.reserve(4);
+
+    if (child_suits.empty()) {
+      SpielFatalError("child_suits should not be empty");
+    }
+
+    for (const auto& child_suit : child_suits) {
+      auto child = Card(false, child_suit, child_rank);
+      legal_children.push_back(child);
+    }
+
+    return legal_children;
+  }
+  
+}`
         }}>
-          Cards are essentially defined by their rank, suit, and whether they are
-          hidden or not. Ranks and suits are members of an enumeration class,
-          RankType and SuitType respectively. Both include kHidden and kNone as members,
-          with the former being used as a placeholder for cards that haven't been
-          revealed yet. The latter is used to represent empty foundation or tableau piles.
+          The <code>Card::LegalChildren()</code> method returns a vector of
+          cards that can be placed on top of it, given its location.
+          For example, an ace of spades can only have a two of spades placed on
+          it if it's in a foundation. Otherwise it has no legal children. From
+          this method, we can generate a list of all legal moves that the
+          agent can take in this state.
         </Paragraph>
-        <Paragraph code={{
-          lang : 'language-cpp',
-          text : 'std::cout << "Second paragraph" << std::endl;'
-        }}>
-          It's also helpful to represent cards as integers, which can be calculated
-          from their rank and suit. Since these are set once they are revealed, it
-          makes sense to calculate them only once and then store them in a private
-          field: hidden_. If a card has been revealed, the first call to Card::GetIndex()
-          will calculate and store it; otherwise, the stored value will be returned.
-        </Paragraph>
-        <Paragraph code={{
-          lang : 'language-cpp',
-          text : 'std::cout << "Third paragraph" << std::endl;'
-        }}>
-          While the location of a card should technically belong to the state,
-          rather than the card itself, in this instance it's helpful to keep it
-          within this class. If it were moved to the state, we would need to lookup
-          the location whenever we wanted to call the Card::LegalChildren()
-          method.
-        </Paragraph>
+        <h3 className={styles.title}> Piles </h3>
+        
     </Page>)
   ]
   return <Article title={'Solitaire AI'} pages={pages} />

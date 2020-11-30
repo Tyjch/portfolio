@@ -11,10 +11,14 @@
 }
 
 .content {
-    padding: 50px;
+    padding          : 50px;
 }
 
 .sidebar {
+    height           : max(100%, 100vh);
+    padding          : 0 50px 0 50px;
+    background-color : #2d2d2d;
+    font-size : 10pt;
 }
 
 .title {
@@ -24,3 +28,14 @@
 .paragraph {
     color: white;
 }
+
+.navigation {
+    padding          : 15px;
+    display          : flex;
+    justify-content  : space-between;
+    position         : fixed;
+    width            : 50%;
+    bottom           : 0;
+}
+
+

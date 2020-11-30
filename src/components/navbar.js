@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImCodepen} from "react-icons/all"
+import { ImCodepen } from "react-icons/all"
 import { motion } from "framer-motion"
 import { Link } from 'react-scroll'
 import styles from '../styles/navbar.module.css'

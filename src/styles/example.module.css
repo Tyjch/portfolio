@@ -1,0 +1,35 @@
+.page {
+    display: flex;
+}
+
+.content {
+    display               : grid;
+    grid-template-columns : repeat(2, 50%);
+}
+
+.article {
+    padding : 50px;
+}
+
+.sidebar {
+    height           : max(100%, 100vh);
+    padding          : 50px;
+    background-color : #2d2d2d;
+}
+
+.paragraph {
+
+}
+
+.menu {
+    height           : max(100%, 100vh);
+    background-color : #22a6ff;
+}
+
+.menu .toggler {
+    margin : 20px;
+}
+
+.menu .links {
+
+}

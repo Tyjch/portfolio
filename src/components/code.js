@@ -12,6 +12,7 @@ function Coder(props) {
   // region Props & State
   // props.code     - the new text to animate with TypeIt
   // props.language - the language to highlight the text with
+  // props.reset    - if true, previous content is cleared before typing
 
   const typeItRef = useRef(null);   // Instance of TypeIt
   const codeRef   = useRef(null);   // Element that contains text to highlight
@@ -23,13 +24,14 @@ function Coder(props) {
   // endregion
 
   useEffect(() => {
-    console.log('%cEFFECT: Code changed', 'color:green');
+    // console.log('%cEFFECT: Code changed', 'color:green');
 
     if (!running) {
       let prev = codeRef.current.textContent;
       let diff = differ.diff_main(prev, props.code);
       let flag = prev.length === 0;
 
+      differ.diff_cleanupSemantic(diff);
       typeItRef.current = new TypeIt(codeRef.current, {
         strings          : [],
         startDelay       : 0,
@@ -66,7 +68,7 @@ function Coder(props) {
           flag = true;
         },
         afterComplete    : (step, instance) => {
-          console.log('%cafterComplete()', 'color:blue');
+          // console.log('%cafterComplete()', 'color:blue');
           setRunning(false);
           instance.destroy();
         },
@@ -74,24 +76,40 @@ function Coder(props) {
 
       codeRef.current.textContent = prev;
       typeItRef.current.reset();
-      typeItRef.current.move('START', {speed: 0});
+
+      if (props.reset === true) {
+        typeItRef.current = typeItRef.current.empty();
+      }
+      typeItRef.current.move('START', {
+        speed  : 0,
+        cursor : false
+      });
 
       for (const d of diff) {
         const [op, text] = d;
         switch (op) {
           case  0 : {
-            console.log(`%cMOVE   : ${text.length}`, 'color:red');
-            typeItRef.current = typeItRef.current.move(text.length, {speed: 200});
+            // console.log(`%cMOVE   : ${text.length}`, 'color:red');
+            typeItRef.current = typeItRef.current.move(text.length, {
+              speed  : 0,
+              cursor : false
+            });
             break;
           }
           case  1 : {
-            console.log(`%cINSERT : ${text}`, 'color:red');
-            typeItRef.current = typeItRef.current.type(text, {speed: 80});
+            // console.log(`%cINSERT : ${text}`, 'color:red');
+            typeItRef.current = typeItRef.current.type(text, {
+              speed : 80
+            });
             break;
           }
           case -1 : {
-            console.log(`%cDELETE : ${text}`, 'color:red');
-            typeItRef.current = typeItRef.current.move(text.length, {speed: 80}).delete(text.length, {speed: 80});
+            // console.log(`%cDELETE : ${text}`, 'color:red');
+            typeItRef.current = typeItRef.current.move(text.length, {
+              speed: 80
+            }).delete(text.length, {
+              speed: 80
+            });
             break;
           }
           default : {
