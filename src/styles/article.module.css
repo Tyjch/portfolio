@@ -2,40 +2,65 @@
     color : white;
 }
 
-.article {
-    display: grid;
-    grid-template-columns: repeat(2, 50%);
-}
-
 .page {
-}
-
-.content {
-    padding          : 50px;
-}
-
-.sidebar {
-    height           : max(100%, 100vh);
-    padding          : 0 50px 0 50px;
-    background-color : #2d2d2d;
-    font-size : 10pt;
-}
-
-.title {
-    color : white;
-}
-
-.paragraph {
-    color: white;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    height: 100vh;
 }
 
 .navigation {
-    padding          : 15px;
-    display          : flex;
-    justify-content  : space-between;
-    position         : fixed;
-    width            : 50%;
-    bottom           : 0;
+    background-color : #22a6ff;
+    text-align       : left;
+    padding          : 20px;
+    height           : 100%;
 }
 
+.navtoggle {
+    display         : flex;
+    justify-content : flex-end;
+}
 
+.navlinks {
+
+}
+
+.navlink {
+    color   : white;
+    padding : 10px;
+    margin  : 0;
+}
+
+.active {
+    color: #22a6ff;
+    border-left-style: solid;
+    border-left-color: #22a6ff;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    text-align: center;
+}
+
+.article {
+    background-color: #131313;
+    text-align: left;
+    padding: 50px;
+}
+
+.sidebar {
+    background-color: black;
+    text-align: center;
+}
+
+.links {
+    padding-left: 15px;
+}
+
+.section {
+
+}
+
+.title {
+    color: white;
+}

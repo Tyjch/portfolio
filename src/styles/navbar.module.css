@@ -39,7 +39,6 @@
     border-bottom-style : solid;
     border-bottom-color : white;
     border-bottom-width : 2px;
-
 }
 
 .title {
@@ -50,6 +49,5 @@
     height          : 100%;
     align-items     : center;
     justify-content : center;
-
-    text-decoration     : none;
+    text-decoration : none;
 }

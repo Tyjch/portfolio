@@ -50,10 +50,10 @@ function Navbar(props) {
         <motion.div className={styles.navItems}>
           {
             props.data.map((navItem) => (
-              <NavItem title={navItem.title}
-                       anchor={navItem.anchor}
-                       offset={navItem.offset}
-                       key={navItem.title} />
+              <NavItem title  = {navItem.title}
+                       anchor = {navItem.anchor}
+                       offset = {navItem.offset}
+                       key    = {navItem.title} />
             ))
           }
         </motion.div>

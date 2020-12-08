@@ -1,0 +1,9 @@
+.navigation {
+    background-color : #22a6ff;
+    padding          : 15px;
+}
+
+.button {
+    display         : flex;
+    justify-content : flex-end;
+}

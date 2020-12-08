@@ -1,112 +1,31 @@
-title : Solitaire AI
-pages :
-  - page : Introduction
-    content :
-    - type : paragraph
-      content : >
-        There have been a few approaches to solving klondike solitaire in the
-        past. They usually assume that the values of hidden cards are known to
-        the player, a form known as thoughtful solitaire. Any game that is
-        solvable in thoughtful solitaire is also solvable in regular solitaire.
-        As as result, research in this area has shown that the solvability of
-        solitaire lies between ~82% and ~91% (Bjarnason et al.)
-      sidebar :
-        code  :
-          language : 'language-js'
-          text     : 'console.log("First paragraph");'
-    - type : paragraph
-      content : >
-        While these bounds are interesting, they rely on the assumption of
-        perfect information (i.e. every card is known). In reality, solitaire
-        is played under uncertainty; you have to consider every permutation of
-        hidden cards and act accordingly. Even with a single deal of solitaire,
-        there are 21! permutations of hidden cards; far too many for a human or
-        computer to calculate.
-      sidebar:
-        code:
-          language: 'language-js'
-          text: 'console.log("Second paragraph");'
-    - type : paragraph
-      content : >
-        Deep reinforcement learning solves this problem by training a deep
-        neural network to approximate the value of arbitrary states or actions.
-        Using these networks, we can derive a strategy that generalizes to
-        states that likely have never seen before. Before we get to that point,
-        we have to create an environment that defines the observations, actions,
-        and rewards in solitaire.
-      sidebar:
-        code:
-          language: 'language-js'
-          text: 'console.log("Third paragraph");'
+nav:
+  links:
+    - text     : Introduction
+      anchor   : '#introduction'
+      sections :
 
-  - page : Support Classes
-    content :
-      - type : paragraph
-        content : >
-          Solitaire fundamentally boils down to piles of cards and rules for moving
-          cards between them. So before we get started on the environment, we'll
-          implement some classes that will encapsulate the objects we'll be operating
-          on. While not all environments take the OOP approach, in this case it
-          certainly made it easier to reason about and debug.
-      - type : section
-        content : Cards
-      - type : paragraph
-        content : >
-          Cards are essentially defined by their rank, suit, and whether they are
-          hidden or not. Ranks and suits are members of an enumeration class,
-          RankType and SuitType respectively. Both include kHidden and kNone as members,
-          with the former being used as a placeholder for cards that haven't been
-          revealed yet. The latter is used to represent empty foundation or tableau piles.
-        sidebar :
-          code  :
-            language : 'language-cpp'
-            text     : >
-              enum class SuitType {
-                kNone = 0,
-                kSpades,
-                kHearts,
-                kClubs,
-                kDiamonds,
-                kHidden,
-              };
+    - text     : Support Classes
+      anchor   : '#support-classes'
+      sections :
+        - text     : Cards
+          anchor   : '#cards'
+          sections :
 
-              enum class RankType {
-                kNone = 0,
-                kA,
-                k2,
-                k3,
-                k4,
-                k5,
-                k6,
-                k7,
-                k8,
-                k9,
-                kT,
-                kJ,
-                kQ,
-                kK,
-                kHidden,
-              };
+        - text     : Piles
+          anchor   : '#piles'
+          sections :
+            - text     : Tableaus
+              anchor   : '#tableaus'
+              sections :
 
-      - type: paragraph
-        content: >
-          It's also helpful to represent cards as integers, which can be calculated
-          from their rank and suit. Since these are set once they are revealed, it
-          makes sense to calculate them only once and then store them in a private
-          field: hidden_. If a card has been revealed, the first call to Card::GetIndex()
-          will calculate and store it; otherwise, the stored value will be returned.
-        sidebar :
-          code  :
-            language : 'language-cpp'
-            text     : 'std::cout << "Second paragraph" << std::endl;'
-      - type: paragraph
-        content: >
-          While the location of a card should technically belong to the state,
-          rather than the card itself, in this instance it's helpful to keep it
-          within this class. If it were moved to the state, we would need to lookup
-          the location whenever we wanted to call the Card::LegalChildren()
-          method.
-        sidebar :
-          code  :
-            language : 'language-cpp'
-            text     : 'std::cout << "Third paragraph" << std::endl;'
+            - text     : Foundations
+              anchor   : '#foundations'
+              sections :
+
+            - text     : Waste
+              anchor   : '#waste'
+              sections :
+
+        - text     : Moves
+          anchor   : '#moves'
+          sections :
