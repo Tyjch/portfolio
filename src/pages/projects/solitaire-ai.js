@@ -21,20 +21,20 @@ function SolitaireAI() {
         </Section>
 
         <Section title={'Piles'} id={'#piles'}>
-          <Lorem count={2} seed={2} />
+          <Lorem count={2} seed={3} />
           <Section title={'Tableaus'} id={'#tableaus'}>
-            <Lorem count={2} seed={2} />
+            <Lorem count={2} seed={4} />
           </Section>
           <Section title={'Foundations'} id={'#foundations'}>
-            <Lorem count={2} seed={2} />
+            <Lorem count={2} seed={5} />
           </Section>
           <Section title={'Waste'} id={'#waste'}>
-            <Lorem count={2} seed={2} />
+            <Lorem count={2} seed={6} />
           </Section>
         </Section>
 
         <Section title={'Moves'} id={'#moves'}>
-          <Lorem count={2} seed={2} />
+          <Lorem count={2} seed={7} />
         </Section>
 
       </Section>

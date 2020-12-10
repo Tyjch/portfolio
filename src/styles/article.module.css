@@ -3,16 +3,9 @@
 }
 
 .page {
-    display: grid;
-    grid-template-columns: repeat(2, auto);
-    height: 100vh;
-}
-
-.navigation {
-    background-color : #22a6ff;
-    text-align       : left;
-    padding          : 20px;
-    height           : 100%;
+    display               : grid;
+    grid-template-columns : repeat(2, auto);
+    height                : 100vh;
 }
 
 .navtoggle {
@@ -31,30 +24,31 @@
 }
 
 .active {
-    color: #22a6ff;
-    border-left-style: solid;
-    border-left-color: #22a6ff;
+    color             : #22a6ff;
+    border-left-style : solid;
+    border-left-color : #22a6ff;
 }
 
 .content {
-    display: grid;
-    grid-template-columns: repeat(2, 50%);
-    text-align: center;
+    display               : grid;
+    grid-template-columns : repeat(2, 50%);
+    text-align            : center;
 }
 
 .article {
-    background-color: #131313;
-    text-align: left;
-    padding: 50px;
+    background-color : #131313;
+    text-align       : left;
+    padding          : 50px;
 }
 
 .sidebar {
-    background-color: black;
-    text-align: center;
+    background-color : black;
+    text-align       : center;
+    padding          : 50px;
 }
 
 .links {
-    padding-left: 15px;
+    padding-left : 15px;
 }
 
 .section {
@@ -62,5 +56,5 @@
 }
 
 .title {
-    color: white;
+    color : white;
 }
