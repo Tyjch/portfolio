@@ -1,0 +1,31 @@
+nav:
+  links:
+    - text     : Introduction
+      anchor   : '#introduction'
+      sections :
+
+    - text     : Support Classes
+      anchor   : '#support-classes'
+      sections :
+        - text     : Cards
+          anchor   : '#cards'
+          sections :
+
+        - text     : Piles
+          anchor   : '#piles'
+          sections :
+            - text     : Tableaus
+              anchor   : '#tableaus'
+              sections :
+
+            - text     : Foundations
+              anchor   : '#foundations'
+              sections :
+
+            - text     : Waste
+              anchor   : '#waste'
+              sections :
+
+        - text     : Moves
+          anchor   : '#moves'
+          sections :
