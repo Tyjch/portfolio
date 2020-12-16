@@ -20,16 +20,16 @@ function NavItem(props) {
 
   return (
     <Link className = {styles.navItem}
-      to            = {props.anchor}
-      activeClass   = {styles.active}
-      spy           = {true}
-      smooth        = {true}
-      duration      = {500}
-      offset        = {props.offset || -100}
+          to            = {props.anchor}
+          activeClass   = {styles.active}
+          spy           = {true}
+          smooth        = {true}
+          duration      = {500}
+          offset        = {props.offset || -100}
     >
       <motion.p className = {styles.title}
-        whileHover = {{ scale: 1.1 }}
-        whileTap   = {{ scale: 0.9 }}>
+                whileHover = {{ scale: 1.1 }}
+                whileTap   = {{ scale: 0.9 }}>
         {props.title.toUpperCase()}
       </motion.p>
 

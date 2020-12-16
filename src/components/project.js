@@ -34,29 +34,29 @@ function Project(props) {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}>
 
-            <motion.h2 className={styles.title}>
-              <motion.a className={styles.github}
-                        href={props.href}
-                        target="_blank"
-                        rel="noopener noreferrer">
-                <VscGithub />
-              </motion.a>
-              {props.title.toUpperCase()}
-            </motion.h2>
+          <motion.h2 className={styles.title}>
+            <motion.a className={styles.github}
+                      href={props.href}
+                      target="_blank"
+                      rel="noopener noreferrer">
+              <VscGithub />
+            </motion.a>
+            {props.title.toUpperCase()}
+          </motion.h2>
 
-            <motion.div className={styles.tags}>
-              {
-                props.tags.map((tag) => (
-                  <motion.h3 className={styles.tag} key={tag}>
-                    {tag.toLowerCase()}
-                  </motion.h3>
-                ))
-              }
-            </motion.div>
+          <motion.div className={styles.tags}>
+            {
+              props.tags.map((tag) => (
+                <motion.h3 className={styles.tag} key={tag}>
+                  {tag.toLowerCase()}
+                </motion.h3>
+              ))
+            }
+          </motion.div>
 
-            <motion.div className={styles.body}>
-              {props.children}
-            </motion.div>
+          <motion.div className={styles.body}>
+            {props.children}
+          </motion.div>
 
         </motion.div>
 

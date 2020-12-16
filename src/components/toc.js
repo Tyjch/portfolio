@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link as ScrollLink } from 'react-scroll'
 import { motion, useCycle } from "framer-motion";
-import { AiOutlineMenu, IoMdArrowDropright } from "react-icons/all";
+import { AiOutlineMenu } from "react-icons/all";
 import styles from "../styles/toc.module.css";
 
 
@@ -9,7 +9,7 @@ function Navigation({ links, selected }) {
   const [isOpen, cycleOpen] = useCycle(true, false);
   const variants = {
     visible : {
-      width      : 'auto',
+      width      : '150px',
       transition : {
         when : 'beforeChildren',
         staggerChildren  : 0.05,
@@ -60,19 +60,16 @@ function Navigation({ links, selected }) {
 }
 
 function Link({ text, anchor, selected, sections }) {
-  const [isActive, setActive] = useState(false);
-  const [isOpen, cycleOpen]   = useCycle(true, false);
+  const [isOpen, cycleOpen] = useCycle(true, false);
 
   const variants = {
     visible : { opacity : 1 },
-    hidden  : { opacity : 0 }
+    hidden  : { opacity : 0 },
   }
 
   const title = (<>
     <ScrollLink
       to          = {anchor}
-      activeClass = {styles.active}
-      spy         = {true}
       smooth      = {true}
       duration    = {500}
       offset      = {-20}
@@ -80,9 +77,12 @@ function Link({ text, anchor, selected, sections }) {
       <motion.h4
         className  = {styles.link}
         initial    = {false}
-        // animate    = {{ y : [100, 0], opacity : [0, 1] }}
         variants   = {variants}
         whileHover = {{ scale : 1.05 }}
+        style      = {{
+          color      : anchor === selected ? '#fff' : '#eee',
+          fontWeight : anchor === selected ? 'bold' : 'normal'
+        }}
       >
         {text}
       </motion.h4>
@@ -92,7 +92,14 @@ function Link({ text, anchor, selected, sections }) {
     {
       isOpen && sections ? (
         <div className={styles.sublinks}>
-          { sections.map(section => <Link {...section} key={section.anchor} />)}
+          { sections.map(section => (
+              <Link
+                {...section}
+                selected = {selected}
+                key      = {section.anchor}
+              />
+            )
+          )}
         </div>
       ) : null
     }

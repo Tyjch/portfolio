@@ -14,6 +14,9 @@
 }
 
 .links {
+    white-space : nowrap;
+    overflow    : hidden;
+    margin-right : 20px;
     padding-top : 50px;
 }
 

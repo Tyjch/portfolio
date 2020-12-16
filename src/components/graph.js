@@ -135,17 +135,17 @@ class GraphContainer extends React.Component {
 
   render() {
     return (
-        <CytoscapeComponent
-          className  = {styles.graph}
-          cy         = {(cy) => { this.cy = cy }}
-          elements   = {nodes.concat(edges)}
-          stylesheet = {stylesheet}
-          layout     = {layout}
-          userPanningEnabled  = {false}
-          userZoomingEnabled  = {false}
-          zoomingEnabled      = {true}
-          boxSelectionEnabled = {false}
-        />
+      <CytoscapeComponent
+        className  = {styles.graph}
+        cy         = {(cy) => { this.cy = cy }}
+        elements   = {nodes.concat(edges)}
+        stylesheet = {stylesheet}
+        layout     = {layout}
+        userPanningEnabled  = {false}
+        userZoomingEnabled  = {false}
+        zoomingEnabled      = {true}
+        boxSelectionEnabled = {false}
+      />
     );
   }
 
