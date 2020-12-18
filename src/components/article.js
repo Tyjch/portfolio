@@ -1,11 +1,62 @@
 import React, { useState } from 'react'
-import { Link } from "react-scroll"
-import { motion, useCycle } from "framer-motion"
+import { motion } from "framer-motion"
 import { Waypoint } from "react-waypoint"
 import SelectionContext from "./selection";
+import SidebarContext from "./sidebar";
 import Navigation from "./toc"
 import styles from '../styles/article.module.css'
 
+function Paragraph({ example, children }) {
+
+  const [isActive, setActive] = useState(false);
+  const variants = {
+    'inactive' : {
+      x               : 0,
+      opacity         : 0.5,
+      color           : '#eee',
+      borderLeftStyle : 'none',
+    },
+    'active'   : {
+      x               : '10px',
+      opacity         : 1.0,
+      color           : '#fff',
+      borderLeftStyle : 'solid',
+      borderLeftWidth : '2px',
+      borderLeftColor : '#fff',
+    }
+  }
+
+  function handleEnter() {
+    setActive(true);
+  }
+
+  function handleLeave() {
+    setActive(false);
+  }
+
+  return (
+    <SidebarContext.Consumer>
+      {
+        ({content, setContent}) => (
+          <Waypoint
+            onEnter      = {() => { handleEnter(); setContent(example) }}
+            onLeave      = {() => { handleLeave(); }}
+            topOffset    = {'20%'}
+            bottomOffset = {'75%'}
+          >
+            <motion.div
+              animate  = {isActive ? 'active' : 'inactive'}
+              variants = {variants}
+              style    = {{ paddingLeft : '10px' }}
+            >
+              {children}
+            </motion.div>
+          </Waypoint>
+        )
+      }
+    </SidebarContext.Consumer>
+  )
+}
 
 function Section({ title, id, children }) {
   return (
@@ -29,10 +80,14 @@ function Section({ title, id, children }) {
 
 function Article(props) {
   const [selection, setSelection] = useState(null);
+  const [content, setContent]     = useState(null);
 
   function updateSelection(newSelection) {
-    // console.log(`EVENT: Updated selection to`, newSelection);
     setSelection(newSelection);
+  }
+
+  function updateContent(newContent) {
+    setContent(newContent);
   }
 
   return (
@@ -40,8 +95,12 @@ function Article(props) {
       <SelectionContext.Provider value={{ selection : selection, setSelection : updateSelection }}>
         <Navigation links={props.data.nav.links} selected={selection} />
         <div className={styles.content}>
-          <div className={styles.article}> {props.children} </div>
-          <div className={styles.sidebar}> Sidebar </div>
+          <SidebarContext.Provider value={{ content : content , setContent : updateContent }}>
+            <div className={styles.article}> {props.children} </div>
+            <div className={styles.sidebar}>
+              <div className={styles.sidebarContent}> {content} </div>
+            </div>
+          </SidebarContext.Provider>
         </div>
       </SelectionContext.Provider>
     </div>
@@ -50,4 +109,4 @@ function Article(props) {
 
 
 export default Article;
-export { Section, Navigation };
+export { Paragraph, Section, Navigation };

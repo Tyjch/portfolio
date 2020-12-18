@@ -1,5 +1,5 @@
 * {
-    color : white;
+    /*color : white;*/
 }
 
 .page {
@@ -38,13 +38,19 @@
 .article {
     background-color : #131313;
     text-align       : left;
-    padding          : 50px;
+    padding          : 50px 60px 50px 40px;
 }
 
 .sidebar {
     background-color : black;
     text-align       : center;
     padding          : 50px;
+}
+
+.sidebarContent {
+    color    : white;
+    position : sticky;
+    top      : 50px;
 }
 
 .links {
@@ -57,4 +63,5 @@
 
 .title {
     color : white;
+    padding-left : 10px;
 }
