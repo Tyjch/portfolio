@@ -1,0 +1,60 @@
+.card {
+    width  : 50px;
+    height : 75px;
+    margin : 10px;
+
+    font-weight      : bold;
+    background-color : black;
+    border-radius    : 5px;
+
+    display         : flex;
+    justify-content : center;
+    align-items     : center;
+}
+
+.tableau {
+    background-color : #171717;
+    border-radius    : 5px;
+    width            : auto;
+    margin           : 5px;
+
+    display        : flex;
+    flex-direction : column;
+}
+
+.board {
+
+}
+
+.tableaus {
+    display         : flex;
+    padding         : 5px;
+}
+
+.foundations {
+    display : flex;
+    flex-direction : row;
+
+}
+
+.waste {
+    display : flex;
+    flex-direction : row;
+}
+
+.pile {
+
+}
+
+.foundation {
+
+}
+
+ul {
+    padding : 5px 0 5px 0;
+}
+
+li {
+    margin: 0;
+    padding: 0;
+}

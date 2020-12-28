@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { motion } from "framer-motion"
 import { Waypoint } from "react-waypoint"
-import SelectionContext from "./selection";
-import SidebarContext from "./sidebar";
+import SelectionContext from "./selection"
+import SidebarContext from "./sidebar"
 import Navigation from "./toc"
 import styles from '../styles/article.module.css'
 

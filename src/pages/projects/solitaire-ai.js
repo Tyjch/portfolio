@@ -1,15 +1,38 @@
 import React from "react"
 import Article, { Paragraph, Section } from "../../components/article"
+import Solitaire from '../../components/projects/solitaire'
+import Coder from "../../components/code";
 import SolitaireAIData from "../../../content/projects/solitaire-ai.yaml"
 import Lorem from "react-lorem-component";
 
 
 function SolitaireAI() {
+
+  const solitaire_example = <Solitaire />
+  const summary_of_piles = (
+    <Coder
+      language = {'language-cpp'}
+      code     = {`
+class Pile {
+  public:
+    Pile(LocationType type, PileID id, SuitType suit = SuitType::kNone);
+    virtual ~Pile() = default;
+    ...
+    virtual std::vector<Card> Sources() const;
+    virtual std::vector<Card> Targets() const;
+    virtual std::vector<Card> Split(Card card);
+    virtual void Reveal(Card card_to_reveal);
+    void Extend(std::vector<Card> source_cards);
+}
+      `}
+    />
+)
+
   return (
     <Article data={SolitaireAIData}>
 
       <Section title={'Introduction'} id={'#introduction'}>
-        <Paragraph example={<pre>'Thoughtful Solitaire & Solvability'</pre>}>
+        <Paragraph example={solitaire_example}>
           <p>
           There have been a few approaches to solving klondike solitaire in the
           past. They usually assume that the values of hidden cards are known to
@@ -65,8 +88,33 @@ function SolitaireAI() {
         </Section>
 
         <Section title={'Piles'} id={'#piles'}>
-          <Paragraph example={<pre>'Fourth example'</pre>}>
-            <Lorem count={2} seed={3} />
+          <Paragraph example={<pre>'Summary of Piles'</pre>}>
+            <p>
+              Now that we've defined a <code>Card</code> class, we can develop an abstract base class that
+              represents an ordered list of cards. By identifying common attributes and behaviors, we can then
+              inherit those in subclasses and specialize the parts as needed.
+            </p>
+          </Paragraph>
+          <Paragraph example={<pre>'Data Members of Piles'</pre>}>
+            <p>
+              A <code>Pile</code> is essentially just a wrapper around a vector of cards with a couple of methods
+              that help determine what actions are available to the agent. Every subclass has cards that can have
+              other cards placed on them (<code>Sources</code>) and cards that can be moved (<code>Targets</code>).
+              Together, these allow us to determine what actions are available to the agent in a particular state.
+            </p>
+          </Paragraph>
+          <Paragraph example={<pre>'Methods of Piles'</pre>}>
+            <p>
+              We also need a few methods for manipulating the underlying vector:
+              <ul>
+                <li><code>Split()</code> removes targets from the <code>Pile</code></li>
+                <li><code>Extend()</code> adds sources from another <code>Pile</code></li>
+                <li><code>Reveal()</code> <i>"flips"</i> a hidden card, assigning it a suit and rank</li>
+              </ul>
+
+
+
+            </p>
           </Paragraph>
           <Section title={'Tableaus'} id={'#tableaus'}>
             <Paragraph example={<pre>'Fifth example'</pre>}>
