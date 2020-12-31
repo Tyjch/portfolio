@@ -9,7 +9,7 @@ import Lorem from "react-lorem-component";
 function SolitaireAI() {
 
   const solitaire_example = <Solitaire />
-  const summary_of_piles = (
+  const summary_of_piles = (<>
     <Coder
       language = {'language-cpp'}
       code     = {`
@@ -26,13 +26,13 @@ class Pile {
 }
       `}
     />
-)
+  </>);
 
   return (
     <Article data={SolitaireAIData}>
 
       <Section title={'Introduction'} id={'#introduction'}>
-        <Paragraph example={solitaire_example}>
+        <Paragraph example={<pre>'Introduction'</pre>}>
           <p>
           There have been a few approaches to solving klondike solitaire in the
           past. They usually assume that the values of hidden cards are known to
@@ -64,80 +64,14 @@ class Pile {
         </Paragraph>
       </Section>
 
-      <Section title={'Support Classes'} id={'#support-classes'}>
-        <Paragraph example={<pre>'Solitaire Anatomy'</pre>}>
-          <p>
-            Solitaire fundamentally boils down to piles of cards and rules for moving
-            cards between them. So before we get started on the environment, we'll
-            implement some classes that will encapsulate the objects we'll be operating
-            on. While not all environments take the OOP approach, in this case it
-            certainly made it easier to reason about and debug.
-          </p>
+      <Section title={'Environment'} id={'#environment'}>
+        <Paragraph example={<pre>'SARSA Loop'</pre>}>
+          In reinforcement learning, an environment is what the agent interacts with. It provides information
+          about its current state and rewards for previous actions. The agent uses the rewards to improve its policy,
+          and this policy is used to determine what action should be picked when a certain state is encountered.
+          When an action is chosen, the state of the environment changes and another set of observations and rewards is
+          provided to the agent.
         </Paragraph>
-
-        <Section title={'Cards'} id={'#cards'}>
-          <Paragraph example={<pre>'Cards Code'</pre>}>
-            <p>
-              Cards are essentially defined by their rank and suit (which can be
-              represented as an integer) and whether they are hidden or not.
-              Although the location of a card within a state should technically
-              belong to the <code>SolitaireState</code> class, in this instance
-              it's helpful to keep it within this class instead.
-            </p>
-          </Paragraph>
-        </Section>
-
-        <Section title={'Piles'} id={'#piles'}>
-          <Paragraph example={<pre>'Summary of Piles'</pre>}>
-            <p>
-              Now that we've defined a <code>Card</code> class, we can develop an abstract base class that
-              represents an ordered list of cards. By identifying common attributes and behaviors, we can then
-              inherit those in subclasses and specialize the parts as needed.
-            </p>
-          </Paragraph>
-          <Paragraph example={<pre>'Data Members of Piles'</pre>}>
-            <p>
-              A <code>Pile</code> is essentially just a wrapper around a vector of cards with a couple of methods
-              that help determine what actions are available to the agent. Every subclass has cards that can have
-              other cards placed on them (<code>Sources</code>) and cards that can be moved (<code>Targets</code>).
-              Together, these allow us to determine what actions are available to the agent in a particular state.
-            </p>
-          </Paragraph>
-          <Paragraph example={<pre>'Methods of Piles'</pre>}>
-            <p>
-              We also need a few methods for manipulating the underlying vector:
-              <ul>
-                <li><code>Split()</code> removes targets from the <code>Pile</code></li>
-                <li><code>Extend()</code> adds sources from another <code>Pile</code></li>
-                <li><code>Reveal()</code> <i>"flips"</i> a hidden card, assigning it a suit and rank</li>
-              </ul>
-
-
-
-            </p>
-          </Paragraph>
-          <Section title={'Tableaus'} id={'#tableaus'}>
-            <Paragraph example={<pre>'Fifth example'</pre>}>
-              <Lorem count={2} seed={4} />
-            </Paragraph>
-          </Section>
-          <Section title={'Foundations'} id={'#foundations'}>
-            <Paragraph example={<pre>'Sixth example'</pre>}>
-              <Lorem count={2} seed={5} />
-            </Paragraph>
-          </Section>
-          <Section title={'Waste'} id={'#waste'}>
-            <Paragraph example={<pre>'Seventh example'</pre>}>
-              <Lorem count={2} seed={6} />
-            </Paragraph>
-          </Section>
-        </Section>
-
-        <Section title={'Moves'} id={'#moves'}>
-          <Paragraph example={<pre>'Eighth example'</pre>}>
-            <Lorem count={2} seed={7} />
-          </Paragraph>
-        </Section>
 
       </Section>
 

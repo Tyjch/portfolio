@@ -1,21 +1,6 @@
 import React, { useState, useRef, forwardRef } from 'react'
-import { motion, AnimateSharedLayout } from 'framer-motion'
+import { motion } from 'framer-motion'
 import styles from '../../styles/projects/solitaire.module.css'
-
-// event.clientX, event.clientY
-// event.layerX,  event.layerY
-// event.pageX,   event.pageY
-// event.screenX, event.screenY
-// event.x,       event.y
-// event.relatedTarget
-// event.srcElement
-// event.target
-// event.toElement
-// event.path[0]
-// - childNodes[0], childNodes[1]
-// - innerHTML, innerText
-// - parentElement, parentNode
-// - children
 
 const RED    = '#A20000';
 const BLACK  = '#a2a2a2';
@@ -63,6 +48,9 @@ function Card({ rank, suit }) {
 function Pile({ cards, handleDragStart, handleDragEnd}) {
 	const [rank, suit] = cards[0];
 	const nextCards    = cards.length >= 1 ? cards.slice(1) : [];
+
+	//console.log(`%c Pile String: ${cards.toString()}`, 'color: #ff0000');
+
 	return (
 		<motion.div
 			className       = {styles.pile}
@@ -198,7 +186,7 @@ function Solitaire({ layout }) {
 		const source_pile = getCards(source_path);
 		const target_pile = getCards(target_path);
 
-		const [source_rank, source_suit] = source_card;
+		// const [source_rank, source_suit] = source_card;
 		const source_index = source_pile.findIndex(card => {
 			return card[0] === source_card[0] && card[1] === source_card[1]
 		});
@@ -207,42 +195,48 @@ function Solitaire({ layout }) {
 		const new_source_pile = source_pile.slice(0, source_index);
 		const new_target_pile = [...target_pile, ...transfer_cards];
 
-		updateState(source_path, new_source_pile);
 		updateState(target_path, new_target_pile);
+		updateState(source_path, new_source_pile);
 
-		console.group('MoveCards:');
-		console.dir(source_card);
-		console.log('Source:', source_pile);
-		console.log('Target:', target_pile);
-		console.log('Source Index:', source_index);
-		console.log('Transfer Cards:', transfer_cards);
-		console.log('New Source Pile:', new_source_pile);
-		console.log('New Target Pile:', new_target_pile);
-		console.groupEnd();
+		// console.group('MoveCards:');
+		// console.dir(source_card);
+		// console.log('Source:', source_pile);
+		// console.log('Target:', target_pile);
+		// console.log('Source Index:', source_index);
+		// console.log('Transfer Cards:', transfer_cards);
+		// console.log('New Source Pile:', new_source_pile);
+		// console.log('New Target Pile:', new_target_pile);
+		// console.groupEnd();
 	}
 	function updateState(path, value) {
+		console.group('updateState');
+
 		switch (path.type) {
 			case 'foundation' : {
-				let state_copy = foundations;
+				let state_copy = foundations.slice();
 				state_copy[path.index] = value;
 				setFoundations(state_copy);
+				console.log('x:', state_copy);
 				break;
 			}
-			case 'tableaus' : {
-				let state_copy = tableaus;
+			case 'tableau' : {
+				let state_copy = tableaus.slice();
 				state_copy[path.index] = value;
 				setTableaus(state_copy);
+				console.log('x:', state_copy);
 				break;
 			}
 			case 'waste' : {
-				setWaste(value);
+				let state_copy = waste.slice()
+				setWaste(state_copy);
+				console.log('x:', waste);
 				break;
 			}
 			default : {
 				console.error('Did not update state in `updateState`')
 			}
 		}
-		console.group('updateState');
+
 		console.log('path:', path)
 		console.log('value:', value)
 		console.groupEnd();
@@ -254,34 +248,17 @@ function Solitaire({ layout }) {
 		const path         = getPath(x, y);
 		const container    = getCards(path);
 		const cardString   = event.srcElement.innerHTML;
-
 		sourceCard.current = getCardData(cardString);
 		sourcePath.current = path;
-
-		// region Logging
-		// console.groupCollapsed('EVENT: handleDragStart');
-		// console.log('Path:', path);
-		// console.log('Container:', container);
-		// console.log('Source:', event.srcElement.innerHTML);
-		// console.log('Card Data:', getCardData(cardString));
-		// console.dir(event);
-		// console.groupEnd();
-		// endregion
 	}
 	function handleDragEnd(event, info) {
-		// Find target path & container
-		// Retrieve source card that was stored when `handleDragStart` was called
-		// ...
-		// Clear out source card ref
-
 		const { x, y }   = info.point;
 		const targetPath = getPath(x, y);
-		moveCards(sourceCard.current, sourcePath.current, targetPath)
-
+		moveCards(sourceCard.current, sourcePath.current, targetPath);
 	}
 
 	// ELEMENTS
-	const wasteDiv       = (<>
+	let wasteDiv       = (<>
 		WASTE
 		<Waste
 			cards           = {waste}
@@ -290,7 +267,7 @@ function Solitaire({ layout }) {
 			ref             = {waste_ref}
 		/>
 	</>);
-	const foundationsDiv = (<>
+	let foundationsDiv = (<>
 		FOUNDATIONS
 		<motion.div className={styles.foundations} ref={foundations_ref}>
 			{
@@ -305,7 +282,7 @@ function Solitaire({ layout }) {
 			}
 		</motion.div>
 	</>);
-	const tableausDiv    = (<>
+	let tableausDiv    = (<>
 		TABLEAUS
 		<motion.div className={styles.tableaus} ref={tableaus_ref}>
 			{

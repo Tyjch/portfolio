@@ -32,6 +32,7 @@
     "gatsby-source-filesystem": "^2.3.32",
     "gatsby-transformer-sharp": "^2.5.16",
     "lodash": "^4.17.20",
+    "mnemonist": "^0.38.1",
     "patch-package": "^6.2.2",
     "prism-react-renderer": "^1.1.1",
     "prismjs": "^1.22.0",
