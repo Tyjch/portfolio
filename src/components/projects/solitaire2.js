@@ -397,8 +397,10 @@ class Solitaire {
 		return legalActions;
 	}
 	applyPlayerMove(source, target) {
+		console.groupCollapsed('applyPlayerMove()');
 		const action = this.legalPlayerMoves().filter(action => isEqual(source, action.source.card) && isEqual(target, action.target.card))[0];
 		action.target.pile.extend(action.source.pile.split(action.source.card))
+		console.groupEnd()
 
 		// console.group('Action');
 		// console.log('action:', action);
@@ -418,7 +420,10 @@ class Solitaire {
 		return legalActions;
 	}
 	applyChanceMove(card) {
+		console.groupCollapsed('applyChanceMove()');
+		console.log('card:', card);
 		const action = this.legalChanceMoves().filter(action => isEqual(action, card))[0];
+		console.log('action:', action);
 		for (let tableau of this.tableaus) {
 			if (tableau.lastCard.hidden) {
 				tableau.reveal(action);
@@ -426,6 +431,7 @@ class Solitaire {
 				break;
 			}
 		}
+		console.groupEnd();
 	}
 
 	// MISCELLANEA

@@ -1,5 +1,5 @@
 import React from "react"
-import SolitaireExample from '../components/projects/solitaire2'
+import SolitaireExample from '../components/projects/solitaire3'
 
 function Example() {
 	return (
