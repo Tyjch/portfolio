@@ -1,19 +1,28 @@
 .card {
     width  : 50px;
     height : 75px;
-    margin : 10px;
+    margin : 5px;
 
     font-weight      : bold;
     background-color : black;
+
     border-radius    : 5px;
+    /*border-style     : solid;*/
+    /*border-color     : white;*/
+    /*box-shadow : inset 0 -35px 15px rgba(155, 155, 155, 0.08);*/
 
     display         : flex;
     justify-content : center;
     align-items     : center;
 
     user-select : none;
+
+
 }
 
+.solitaire {
+    display: flex;
+}
 .board {
 
 }
@@ -29,6 +38,8 @@
     margin        : 5px;
     padding       : 5px;
     border-radius : 5px;
+
+    min-height : 100px;
 }
 .foundations {
     background-color : #171717;
@@ -38,6 +49,8 @@
     margin        : 5px;
     padding       : 5px;
     border-radius : 5px;
+
+    min-height : 100px;
 }
 .tableaus {
     background-color : #171717;
@@ -50,7 +63,8 @@
 }
 
 .foundation {
-
+    display: flex;
+    flex-direction: row;
 }
 .tableau {
     width          : auto;
@@ -60,17 +74,27 @@
 
 .actions {
     display        : flex;
-    flex-direction : row;
-    margin         : 20px 5px 20px 5px;
+    flex-direction : column;
+    margin         : 5px;
 }
 .action {
     background-color : #171717;
-    padding          : 10px;
-    margin-right     : 15px;
+    padding          : 5px;
+    margin-bottom    : 15px;
     color            : white;
     border-radius    : 5px;
     user-select      : none;
+
+    height : 40px;
+    width  : 80px;
+
+    display         : flex;
+    justify-content : center;
+    align-items     : center;
 }
+
+
+
 
 ul {
     padding : 5px 0 5px 0;

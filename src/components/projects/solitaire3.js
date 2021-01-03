@@ -260,14 +260,20 @@ function run_tests() {
 
 class Card {
 
-	constructor(rank='', suit='') {
+	constructor(rank='', suit='', hidden=false) {
 		// TODO: Should `hidden` be true or false by default? Or should it even be included as a parameter?
+		//  If rank and suit are '', the card should always be hidden
+		//  Otherwise, it may be hidden or not, depending on perfect or imperfect information
 		if (RANKS_SET.has(rank) && SUITS_SET.has(suit)) {
 			this.rank   = rank;
 			this.suit   = suit;
 		} else {
 			throw 'Invalid arguments passed to `Card` constructor';
 		}
+
+		// if (this.rank === '' && this.suit === '') {
+		// 	this.hidden = true;
+		// }
 	}
 	is_equal(other_card) {
 		return this.rank === other_card.rank && this.suit === other_card.suit && this.hidden === other_card.hidden;
@@ -280,7 +286,7 @@ class Card {
 				return `${GLYPHS.get(this.suit)}`;
 			}
 		} else {
-			return '□'
+			return ''
 		}
 	}
 
@@ -356,6 +362,9 @@ class Pile {
 		return this.cards.map(card => card.to_string()).toString();
 	}
 
+	get size() {
+		return this.cards.length;
+	}
 	get sources() {
 		// None → Array of Cards
 		console.warn(`'sources()' is not implemented`);
@@ -500,7 +509,7 @@ class Foundation extends Pile {
 				return [new Card(this.target.next_rank, this.suit)];
 			}
 		} else {
-			return SUITS.slice(1).map(suit => new Card('A', suit));
+			return [new Card('A', this.suit)];
 		}
 	}
 }
@@ -511,6 +520,27 @@ class Solitaire {
 		this.tableaus     = tableaus;
 		this.foundations  = foundations;
 		this.hidden_cards = hidden_cards;
+	}
+
+	log() {
+		console.group('Solitaire');
+		console.group('WASTE:');
+		console.log(this.waste.to_string());
+		console.groupEnd();
+
+		console.group('FOUNDATIONS:');
+		for (const foundation of this.foundations) {
+			console.log(foundation.to_string());
+		}
+		console.groupEnd();
+
+		console.group('TABLEAUS:');
+		for (const tableau of this.tableaus) {
+			console.log(tableau.to_string());
+		}
+		console.groupEnd();
+
+		console.groupEnd();
 	}
 
 	legalMoves() {
@@ -537,52 +567,71 @@ class Solitaire {
 		let {card, source_pile, target_pile} = move;
 		target_pile.extend(source_pile.split(card));
 	}
-	log() {
-		console.group('Solitaire');
-			console.group('WASTE:');
-				console.log(this.waste.to_string());
-			console.groupEnd();
 
-			console.group('FOUNDATIONS:');
-				for (const foundation of this.foundations) {
-					console.log(foundation.to_string());
-				}
-			console.groupEnd();
+	chanceOutcomes() {
+		return this.hidden_cards;
+	}
+	applyOutcome(card) {
+		// TODO: Ensure that move is legal first
+		for (let tableau of this.tableaus) {
+			if (tableau.size >= 1 && tableau.cards[tableau.size - 1].hidden) {
+				tableau.reveal(card);
+				this.hidden_cards = this.hidden_cards.filter(hidden_card => !hidden_card.is_equal(card));
+			}
+		}
+	}
 
-			console.group('TABLEAUS:');
-				for (const tableau of this.tableaus) {
-					console.log(tableau.to_string());
-				}
-			console.groupEnd();
+	get type() {
+		// None → String ('player', 'chance', or 'terminal')
 
-		console.groupEnd();
+		// Check if it's a chance node
+		for (const tableau of this.tableaus) {
+			if (tableau.size >= 1 && tableau.cards[tableau.size - 1].hidden) {
+				return 'chance';
+			}
+		}
+
+		// Check if it's a player node
+		if (this.legalMoves().length >= 1) {
+			return 'player'
+		}
+
+		// If there are no hidden cards to reveal & no legal actions to take, it's terminal
+		return 'terminal';
 	}
 }
 
-function ReactCard({card}) {
+function ReactCard({ card }) {
 	return (
 		<motion.div
 			className = {styles.card}
-			style     = {{ color : card.color === 'red' ? '#ff0000' : '#ffffff' }}
 			layoutId  = {card.rank.concat(card.suit)}
+			style     = {{
+				color  : card.color === 'red' ? '#ff0000' : '#ffffff',
+				//opacity : 0.5,
+				//marginBottom : '-35px',
+			}}
 		>
 			{card.to_string()}
 		</motion.div>
 	)
 }
 
-function ReactSolitaire({solitaire}) {
+function ReactSolitaire({ solitaire }) {
 	const forceUpdate = useForceUpdate();
 	const ref = useRef(solitaire);
 
-	const handleMove = useCallback(move => {
+	const handleMove    = useCallback(move => {
 		ref.current.applyMove(move);
 		forceUpdate();
-	}, [forceUpdate])
+	}, [forceUpdate]);
+	const handleOutcome = useCallback(card => {
+		ref.current.applyOutcome(card);
+		forceUpdate();
+	}, [forceUpdate]);
 
 	const waste_element       = (<>
 		<motion.div className={styles.waste}>
-			WASTE
 			{ ref.current.waste.cards.map((card, i) => <ReactCard card={card} key={i} /> )}
 		</motion.div>
 	</>);
@@ -608,44 +657,57 @@ function ReactSolitaire({solitaire}) {
 			}
 		</motion.div>
 	</>);
-	const legal_moves_element = (<>
+	const actions_element     = (<>
 		<motion.div className={styles.actions}>
 			{
-				ref.current.legalMoves().map((move, index) => (
-					<motion.div
-						className  = {styles.action}
-						whileHover = {{ scale : 1.10 }}
-						whileTap   = {{ scale : 0.85 }}
-						onClick    = {() => handleMove(move)}
-						key        = {index}
-					>
-						Action
-					</motion.div>
-				))
+				ref.current.type === 'player' ?
+					ref.current.legalMoves().map((move, index) => (
+						<motion.div
+							className  = {styles.action}
+							whileHover = {{ scale : 1.10 }}
+							whileTap   = {{ scale : 0.85 }}
+							onClick    = {() => handleMove(move)}
+							key        = {index}
+						>
+							{move.card.to_string()}→{move.target_pile.target.to_string()}
+						</motion.div>
+					)) : ref.current.chanceOutcomes().map((card, index) => (
+						<motion.div
+							className  = {styles.action}
+							whileHover = {{ scale : 1.10 }}
+							whileTap   = {{ scale : 0.85 }}
+							onClick    = {() => handleOutcome(card)}
+							key        = {index}
+						>
+							{card.to_string()}
+						</motion.div>
+					))
 			}
 		</motion.div>
-	</>)
+	</>);
+
 	return (
 		<AnimateSharedLayout>
-			<motion.div className={styles.board}>
-				{waste_element}
-				{foundations_element}
-				{tableaus_element}
-				{legal_moves_element}
+			<motion.div className={styles.solitaire}>
+				{actions_element}
+				<motion.div className={styles.board}>
+					{waste_element}
+					{foundations_element}
+					{tableaus_element}
+				</motion.div>
 			</motion.div>
 		</AnimateSharedLayout>
-	)
+	);
 }
 
 export default function SolitaireExample() {
-	test_solitaire();
 
-	const waste = new Waste([
+	const waste        = new Waste([
 		new Card('A', 's'),
 		new Card('2', 's'),
 		new Card('3', 's'),
 	]);
-	const tableaus = [
+	const tableaus     = [
 		new Tableau([new Card('K', 's')]),
 		new Tableau([new Card(), new Card('Q', 'h')]),
 		new Tableau([new Card(), new Card(), new Card('J', 's')]),
@@ -654,7 +716,7 @@ export default function SolitaireExample() {
 		new Tableau([new Card(), new Card(), new Card(), new Card(), new Card(), new Card('T', 'd')]),
 		new Tableau([new Card(), new Card(), new Card(), new Card(), new Card('9', 's'), new Card('8', 'h'), new Card('7', 's')]),
 	];
-	const foundations = [
+	const foundations  = [
 		new Foundation([], 's'),
 		new Foundation([], 'h'),
 		new Foundation([], 'c'),

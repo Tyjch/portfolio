@@ -1,6 +1,6 @@
 import React from "react"
 import Article, { Paragraph, Section } from "../../components/article"
-import Solitaire from '../../components/projects/solitaire'
+import SolitaireExample from '../../components/projects/solitaire3'
 import Coder from "../../components/code";
 import SolitaireAIData from "../../../content/projects/solitaire-ai.yaml"
 import Lorem from "react-lorem-component";
@@ -8,48 +8,30 @@ import Lorem from "react-lorem-component";
 
 function SolitaireAI() {
 
-  const solitaire_example = <Solitaire />
-  const summary_of_piles = (<>
-    <Coder
-      language = {'language-cpp'}
-      code     = {`
-class Pile {
-  public:
-    Pile(LocationType type, PileID id, SuitType suit = SuitType::kNone);
-    virtual ~Pile() = default;
-    ...
-    virtual std::vector<Card> Sources() const;
-    virtual std::vector<Card> Targets() const;
-    virtual std::vector<Card> Split(Card card);
-    virtual void Reveal(Card card_to_reveal);
-    void Extend(std::vector<Card> source_cards);
-}
-      `}
-    />
-  </>);
+  const solitaire_example = <SolitaireExample />
 
   return (
     <Article data={SolitaireAIData}>
 
       <Section title={'Introduction'} id={'#introduction'}>
-        <Paragraph example={<pre>'Introduction'</pre>}>
+        <Paragraph example={solitaire_example}>
           <p>
-          There have been a few approaches to solving klondike solitaire in the
-          past. They usually assume that the values of hidden cards are known to
-          the player, a form known as thoughtful solitaire. Any game that is
-          solvable in thoughtful solitaire is also solvable in regular solitaire.
-          As as result, research in this area has shown that the solvability of
-          solitaire lies between ~82% and ~91% <cite>(Bjarnason et al.)</cite>
+            Research in klondike solitaire has generally been focused on estimating
+            its solvability. They usually assume that the values of hidden cards are
+            known to the player, a form known as thoughtful solitaire. Any game that
+            is solvable in thoughtful solitaire is also solvable in regular solitaire.
+            As as result, research in this area has shown that the solvability of
+            solitaire lies between ~82% and ~91% <cite>(Bjarnason et al.)</cite>
           </p>
         </Paragraph>
-        <Paragraph example={<pre>'Perfect vs Imperfect Information'</pre>}>
+        <Paragraph example={<pre>'Iterate through possible values of hidden cards'</pre>}>
           <p>
-          While these bounds are interesting, they rely on the assumption of
-          perfect information (i.e. every card is known). In reality, solitaire
-          is played under uncertainty; you have to consider every permutation of
-          hidden cards and act accordingly. Even with a single deal of solitaire,
-          there are 21! permutations of hidden cards; far too many for a human or
-          computer to calculate.
+            While these bounds are interesting, they rely on the assumption of
+            perfect information (i.e. every card is known). In reality, solitaire
+            is played under uncertainty; you have to consider every permutation of
+            hidden cards and act accordingly. Even with a single deal of solitaire,
+            there are 21! permutations of hidden cards; far too many for a human or
+            computer to calculate.
           </p>
         </Paragraph>
         <Paragraph example={<pre>'Deep Reinforcement Learning'</pre>}>
