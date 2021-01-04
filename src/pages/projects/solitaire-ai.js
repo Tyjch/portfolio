@@ -1,6 +1,6 @@
 import React from "react"
 import Article, { Paragraph, Section } from "../../components/article"
-import SolitaireExample from '../../components/projects/solitaire3'
+import SolitaireExample from '../../components/projects/solitaire'
 import Coder from "../../components/code";
 import SolitaireAIData from "../../../content/projects/solitaire-ai.yaml"
 import Lorem from "react-lorem-component";
