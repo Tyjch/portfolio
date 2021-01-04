@@ -1,34 +1,66 @@
+* {
+    --card-font-size : 1vw;
+}
+/* CARD CLASS */
 .card {
-    width  : 50px;
-    height : 75px;
+
+    font-size : var(--card-font-size);
+
+    width     : 2em;
+    height    : 3em;
+
     margin : 5px;
 
     font-weight      : bold;
     background-color : black;
 
     border-radius    : 5px;
-    /*border-style     : solid;*/
-    /*border-color     : white;*/
-    /*box-shadow : inset 0 -35px 15px rgba(155, 155, 155, 0.08);*/
+    border-top-style : groove;
+    border-top-color : rgba(23, 23, 23, 0.8);
+    border-top-width : 2px;
 
-    display         : flex;
-    justify-content : center;
-    align-items     : center;
+    display          : flex;
+    justify-content  : center;
+    align-items      : center;
 
-    visibility: visible;
-    user-select : none;
+    text-shadow      : 0 0 2px;
+    user-select      : none;
 }
 
+/* SOLITAIRE CONTAINERS */
 .solitaire {
-    display: flex;
+    display    : flex;
+    min-height : 80vh;
 }
 .board {
-
-}
-.pile {
-
+    display        : flex;
+    flex-direction : column;
 }
 
+/* PILE GROUPS */
+.foundations {
+    background-color : #171717;
+    display          : flex;
+    flex-direction   : row;
+
+    margin-bottom : 10px;
+    padding       : 10px 10px 10px 15px;
+    border-radius : 5px;
+
+    min-height : 110px;
+}
+.tableaus {
+    background-color : #171717;
+    display          : flex;
+    width            : auto;
+    height           : 100%;
+
+    /*margin        : 5px;*/
+    padding       : 15px;
+    border-radius : 5px;
+}
+
+/* PILE CLASSES */
 .waste {
     background-color : #171717;
     display          : flex;
@@ -37,56 +69,53 @@
     align-content    : flex-start;
     justify-content  : flex-start;
 
-    margin        : 5px;
-    padding       : 5px;
+    margin-left   : 10px;
+    padding       : 15px;
     border-radius : 5px;
 
-    min-height : 100px;
-    max-width  : 190px;
+    min-height : 80px;
+    min-width  : 210px;
+    max-width  : 210px;
 }
-.foundations {
-    background-color : #171717;
-    display          : flex;
-    flex-direction   : row;
-
-    margin        : 5px;
-    padding       : 5px;
-    border-radius : 5px;
-
-    min-height : 100px;
-}
-.tableaus {
-    background-color : #171717;
-    display          : flex;
-    width            : auto;
-
-    margin        : 5px;
-    padding       : 5px;
-    border-radius : 5px;
-}
-
 .foundation {
-    display: flex;
-    flex-direction: row;
+    display        : flex;
+    flex-direction : row;
+
+    position : relative;
+    top      : 0;
+    left     : 0;
 }
 .tableau {
-    width          : auto;
     display        : flex;
     flex-direction : column;
+    width          : 60px;
+
+    position : relative;
+    top      : 0;
+    left     : 0;
 }
 
+/* ACTIONS DIV */
 .actions {
-    display        : flex;
-    flex-direction : column;
-    margin         : 5px;
+    background-color : #171717;
+    display          : flex;
+    flex-direction   : column;
+
+    padding : 10px;
+    margin-right : 10px;
+    border-radius  : 5px;
+
+
+
 }
 .action {
-    background-color : #171717;
+    background-color : #000000;
     padding          : 5px;
-    margin-bottom    : 15px;
+    margin-bottom    : 10px;
     color            : white;
     border-radius    : 5px;
     user-select      : none;
+    font-weight      : bold;
 
     height : 40px;
     width  : 80px;
@@ -96,13 +125,19 @@
     align-items     : center;
 }
 
+/* MISCELLANEOUS */
 
-
-
-ul {
-    padding : 5px 0 5px 0;
+/* - Stacks tableau cards slightly on top of each other */
+.tableau > .card:not(:first-child) {
+    margin-top : -25px;
 }
-li {
-    margin: 0;
-    padding: 0;
+
+/* - Stacks foundation cards directly on top of each other */
+.foundation > .card {
+    position : absolute;
+    left     : 0;
+}
+.foundation > .card:first-child {
+    position : relative;
+    left     : 0;
 }

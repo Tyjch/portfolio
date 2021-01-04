@@ -1,23 +1,39 @@
 import React from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import Article, { Paragraph, Section } from "../../components/article"
-import SolitaireExample from '../../components/projects/solitaire'
+import SolitaireExample, { Solitaire, ReactSolitaire, getPerfectState, getImperfectState } from '../../components/projects/solitaire'
 import Coder from "../../components/code";
 import SolitaireAIData from "../../../content/projects/solitaire-ai.yaml"
 import Lorem from "react-lorem-component";
 
 
+
+
+
 function SolitaireAI() {
 
+  const deck = getPerfectState();
   const solitaire_example = <SolitaireExample />
+  const examples = {
+    introduction : (<>
+      <ReactSolitaire
+        solitaire   = { new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards) }
+        interactive = {false}
+        pausable    = {false}
+        autorun
+      />
+    </>),
+  }
+
 
   return (
     <Article data={SolitaireAIData}>
 
       <Section title={'Introduction'} id={'#introduction'}>
-        <Paragraph example={solitaire_example}>
+        <Paragraph example={examples.introduction} onEnter={(x) => console.log('onEnter content:', x)}>
           <p>
             Research in klondike solitaire has generally been focused on estimating
-            its solvability. They usually assume that the values of hidden cards are
+            its solvability. It's usually assumed that the values of hidden cards are
             known to the player, a form known as thoughtful solitaire. Any game that
             is solvable in thoughtful solitaire is also solvable in regular solitaire.
             As as result, research in this area has shown that the solvability of
@@ -54,7 +70,13 @@ function SolitaireAI() {
           When an action is chosen, the state of the environment changes and another set of observations and rewards is
           provided to the agent.
         </Paragraph>
+      </Section>
 
+      <br />
+      <Section title={'Other'} id={'#other'}>
+        <Paragraph example={<pre>'Miscellaneous Stuff'</pre>}>
+          <Lorem count={10} />
+        </Paragraph>
       </Section>
 
     </Article>

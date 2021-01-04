@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { motion } from "framer-motion"
+import {AnimatePresence, motion} from "framer-motion"
 import { Waypoint } from "react-waypoint"
 import SelectionContext from "./selection"
 import SidebarContext from "./sidebar"
 import Navigation from "./toc"
 import styles from '../styles/article.module.css'
 
-function Paragraph({ example, children }) {
+function Paragraph({ example, onEnter, children }) {
 
   const [isActive, setActive] = useState(false);
   const variants = {
@@ -39,10 +39,19 @@ function Paragraph({ example, children }) {
       {
         ({content, setContent}) => (
           <Waypoint
-            onEnter      = {() => { handleEnter(); setContent(example) }}
-            onLeave      = {() => { handleLeave(); }}
             topOffset    = {'20%'}
-            bottomOffset = {'75%'}
+            bottomOffset = {'90%'}
+            onEnter = {() => {
+              handleEnter();
+              setContent(example);
+              if (typeof(onEnter) === 'function') {
+                onEnter(content);
+              }
+            }}
+            onLeave = {() => {
+              handleLeave();
+            }}
+
           >
             <motion.div
               animate  = {isActive ? 'active' : 'inactive'}
@@ -97,9 +106,11 @@ function Article(props) {
         <div className={styles.content}>
           <SidebarContext.Provider value={{ content : content , setContent : updateContent }}>
             <div className={styles.article}> {props.children} </div>
-            <div className={styles.sidebar}>
-              <div className={styles.sidebarContent}> {content} </div>
-            </div>
+            <motion.div className={styles.sidebar}>
+                <motion.div className={styles.sidebarContent}>
+                    {content}
+                </motion.div>
+            </motion.div>
           </SidebarContext.Provider>
         </div>
       </SelectionContext.Provider>
