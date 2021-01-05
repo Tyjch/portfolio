@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {AnimatePresence, motion} from "framer-motion"
+import { motion } from "framer-motion"
 import { Waypoint } from "react-waypoint"
 import SelectionContext from "./selection"
 import SidebarContext from "./sidebar"

@@ -1,7 +1,12 @@
 import React from "react"
-import SolitaireExample from '../components/projects/solitaire'
+import { Solitaire, getImperfectState } from "../components/projects/solitaire";
+import GameTree, { RandomAgent } from '../components/projects/game-tree'
 
 function Example() {
+	const deck      = getImperfectState();
+	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
+	const agent     = new RandomAgent();
+
 	return (
 		<div style={{
 			backgroundColor : '#343434',
@@ -9,7 +14,12 @@ function Example() {
 			height          : '100%',
 			padding         : '100px',
 		}}>
-			<SolitaireExample />
+			<GameTree
+				solitaire    = {solitaire}
+				agent_object = {agent}
+				speed        = {1000}
+				is_recursive = {false}
+			/>
 		</div>
 	)
 }

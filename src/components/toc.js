@@ -60,7 +60,8 @@ function Navigation({ links, selected }) {
 }
 
 function Link({ text, anchor, selected, sections }) {
-  const [isOpen, cycleOpen] = useCycle(true, false);
+  // TODO: Is it okay to remove `CycleOpen` from this unpacking?
+  const [isOpen, ] = useCycle(true, false);
 
   const variants = {
     visible : { opacity : 1 },
