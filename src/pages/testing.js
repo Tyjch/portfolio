@@ -1,27 +1,44 @@
 import React from "react"
-import { Solitaire, getImperfectState } from "../components/projects/solitaire";
-import GameTree, { RandomAgent } from '../components/projects/game-tree'
+import { Solitaire, getImperfectState, getPerfectState } from "../components/projects/solitaire";
+import GameTree, { GameTreeController } from '../components/projects/game-tree'
 
 function Example() {
-	const deck      = getImperfectState();
+	const deck      = getPerfectState();
 	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
-	const agent     = new RandomAgent();
 
 	return (
 		<div style={{
-			backgroundColor : '#343434',
-			width           : '100%',
-			height          : '100%',
-			padding         : '100px',
+			height          : '100vh',
+			display         : 'flex',
+			justifyContent  : 'center',
+			alignItems      : 'center',
+			backgroundColor : 'gray',
 		}}>
 			<GameTree
 				solitaire    = {solitaire}
-				agent_object = {agent}
-				speed        = {1000}
-				is_recursive = {false}
+				is_recursive = {true}
+				max_depth    = {100}
 			/>
 		</div>
-	)
+	);
 }
+
+// function Example() {
+// 	const deck      = getImperfectState();
+// 	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
+//
+// 	return (
+// 		<div style={{
+// 			height          : '100vh',
+// 			width           : '100vw',
+// 			display         : 'flex',
+// 			justifyContent  : 'center',
+// 			alignItems      : 'center',
+// 			backgroundColor : 'gray',
+// 		}}>
+// 			<GameTreeController solitaire={solitaire} />
+// 		</div>
+// 	);
+// }
 
 export default Example;

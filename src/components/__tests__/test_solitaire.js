@@ -1,5 +1,8 @@
-import { Card, Pile, Tableau, Foundation, Solitaire, SUITS, RANKS } from "../projects/solitaire";
+import { Card, Pile, Tableau, Foundation, Solitaire, SUITS, RANKS, getImperfectState } from "../projects/solitaire";
 
+function random_choice(array) {
+	return array[Math.floor(Math.random() * array.length)];
+}
 function generateValidCards() {
 	let valid_cards = [];
 	for (const hidden of [true, false]) {
@@ -12,44 +15,6 @@ function generateValidCards() {
 	return valid_cards;
 }
 const valid_cards = generateValidCards();
-
-// describe.each(valid_cards)('new Card(%s, %s, %p)', (rank, suit, hidden) => {
-// 	describe(`has valid`, () => {
-// 		test('.rank', () => {
-// 			const card = new Card(rank, suit, hidden);
-// 			expect(card.rank).toEqual(rank);
-// 		});
-// 		test('.suit', () => {
-// 			const card = new Card(rank, suit, hidden);
-// 			expect(card.suit).toEqual(suit);
-// 		});
-// 		test('.hidden', () => {
-// 			const card = new Card(rank, suit, hidden);
-// 			if (card.rank === '' && card.suit === '') {
-// 				expect(card.hidden).toEqual(true);
-// 			} else {
-// 				expect(card.hidden).toEqual(hidden);
-// 			}
-// 		})
-// 	})
-// })
-//
-// describe('Card', () => {
-// 	describe('created with', () => {
-// 		describe.each(SUITS)("suit='%s'", (suit) => {
-// 			describe.each(RANKS)(", rank='%s'", (rank) => {
-// 				describe.each([true, false])(", and hidden='%s'", (hidden) => {
-// 					const card = new Card(rank, suit, hidden);
-//
-// 					test('has valid rank', () => {
-// 						expect(card.rank).toEqual(rank);
-// 					})
-// 				})
-// 			})
-// 		})
-// 	})
-// })
-
 
 // NOTE: `empty` and `non-empty` both imply that the argument is valid
 // NOTE: `empty` means the argument is provided as the empty string ''
@@ -88,4 +53,42 @@ test('Cards with the same rank and suit that are hidden are not equal', () => {
 	const card = new Card('K', 's', true);
 	const other_card = new Card('K', 's', true);
 	expect(card.is_equal(other_card)).toEqual(false);
+})
+
+test('Solitaire is deep-copied, actions in one do not effect the other', () => {
+	const deck = getImperfectState();
+	let original_solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
+	let cloned_solitaire   = original_solitaire.clone();
+
+	const snapshot = original_solitaire.to_string();
+
+	for (let i = 0; i < 5; i++) {
+		console.log(`Iteration ${i} ---------------------------------------------------------`);
+		console.log('Cloned:', cloned_solitaire.to_string());
+
+		const legal_actions = cloned_solitaire.legalMoves();
+		const chosen_action = random_choice(legal_actions);
+
+		switch (cloned_solitaire.type) {
+			case 'player' : {
+				console.log('chosen action:\n', chosen_action.card.to_string(), '->', chosen_action.target_pile.to_string());
+				cloned_solitaire.applyMove(chosen_action);
+				break;
+			}
+			case 'chance' : {
+				console.log('chosen outcome:\n', chosen_action.to_string());
+				cloned_solitaire.applyOutcome(chosen_action);
+				break;
+			}
+			default : {
+				console.error('cloned_solitaire.type !== player or chance')
+				break;
+			}
+		}
+
+
+
+	}
+
+
 })

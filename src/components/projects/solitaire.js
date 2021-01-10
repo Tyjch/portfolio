@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react'
+import { cloneDeep } from 'lodash'
 import { VscDebugStart, VscDebugStop } from 'react-icons/vsc'
 import { AnimateSharedLayout, motion} from 'framer-motion'
 import styles from '../../styles/projects/solitaire.module.css'
@@ -12,7 +13,7 @@ const GLYPHS = new Map([
 	['',  '□'],
 ]);
 
-const RANKS = ['', 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'];
+export const RANKS = ['', 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'];
 const SUITS = ['', 's', 'h', 'c', 'd'];
 const PILES = ['', 'tableau', 'foundation', 'waste'];
 
@@ -186,7 +187,7 @@ class Card {
 				return `${GLYPHS.get(this.suit)}`;
 			}
 		} else {
-			return ''
+			return '□'
 		}
 	}
 
@@ -303,6 +304,9 @@ class Waste extends Pile {
 		this.cards = this.cards.filter(c => !(c.rank === card.rank && c.suit === card.suit));
 		return split_cards;
 	}
+	clone() {
+		return new Waste(cloneDeep(this.cards));
+	}
 	get sources() {
 		// None → Array of Cards
 		return this.cards.filter((card, index) => !card.hidden && index % 3 === 0);
@@ -314,7 +318,8 @@ class Tableau extends Pile {
 		const length = this.cards.length;
 		if (length >= 1 && this.cards[length - 1].hidden) {
 			const last_card = this.cards[length - 1];
-			if (last_card.rank !== '' && last_card.suit !== '') {
+			if ((last_card.rank !== '' || last_card.rank !== undefined) &&
+				  (last_card.suit !== '' || last_card.suit !== undefined)) {
 				last_card.reveal();
 			} else {
 				last_card.reveal_as(card.rank, card.suit);
@@ -334,6 +339,9 @@ class Tableau extends Pile {
 		} else {
 			return [];
 		}
+	}
+	clone() {
+		return new Tableau(cloneDeep(this.cards));
 	}
 
 	get sources() {
@@ -384,6 +392,9 @@ class Foundation extends Pile {
 			throw new Error('Foundation.split() : No cards to split');
 		}
 	}
+	clone() {
+		return new Foundation(cloneDeep(this.cards), this.suit);
+	}
 
 	get sources() {
 		if (this.cards.length >= 1) {
@@ -413,6 +424,10 @@ class Foundation extends Pile {
 }
 
 class Solitaire {
+	// TODO: Maybe store history of moves or at least the previous one?
+	// TODO: Identify moves that are reversible & what their reward would be
+	// TODO: Implement scoring function, customizable with some arguments for different kinds of moves
+
 	constructor(waste, tableaus, foundations, hidden_cards) {
 		this.waste        = waste;
 		this.tableaus     = tableaus;
@@ -420,12 +435,8 @@ class Solitaire {
 		this.hidden_cards = hidden_cards;
 	}
 
-	// TODO: Maybe store history of moves or at least the previous one?
-	// TODO: Identify moves that are reversible & what their reward would be
 	legalMoves() {
-		// TODO: Foundations can only accept moves from top cards in the tableau
 		let legal_moves = [];
-
 		for (let target_pile of this.tableaus) {
 			target_pile.legalChildren.forEach(legal_child => {
 				for (let source_pile of [this.waste, ...this.tableaus, ...this.foundations]) {
@@ -466,13 +477,27 @@ class Solitaire {
 				}
 			})
 		}
-
 		return legal_moves;
 	}
 	applyMove(move) {
 		// TODO: Ensure that move is legal first
+		//console.group('applyMove()')
+		// const legal_moves = this.legalMoves().filter(legal_move => {
+		// 	try {
+		// 		return legal_move.card.is_equal(move.card) && legal_move.target_pile.target.is_equal(move.target_pile.target)
+		// 	} catch (e) {
+		// 		// console.warn(`MOVE:
+		// 	  // - move.card        : ${move.card.to_string()}         -> ${legal_move.card.to_string()}
+		// 	  // - move.source_pile : ${move.source_pile.to_string()}  -> ${legal_move.source_pile.to_string()}
+		// 	  // - move.target_pile : ${move.target_pile.to_string()}  -> ${legal_move.target_pile.to_string()}`);
+		// 		return false;
+		// 	}
+		// });
+		// console.log('legal_moves:', legal_moves);
+		// let {card, source_pile, target_pile} = legal_moves[0];
 		let {card, source_pile, target_pile} = move;
 		target_pile.extend(source_pile.split(card));
+		//console.groupEnd();
 	}
 
 	chanceOutcomes() {
@@ -498,12 +523,29 @@ class Solitaire {
 		}
 	}
 
-	// TODO: Implement scoring function, customizable with some arguments for different kinds of moves
 	get reward() {
 		return 0.0;
 	}
 	get returns() {
 		return 0.0;
+	}
+	get type() {
+		// None → String ('player', 'chance', or 'terminal')
+
+		// Check if it's a chance node
+		for (const tableau of this.tableaus) {
+			if (tableau.size >= 1 && tableau.cards[tableau.size - 1].hidden) {
+				return 'chance';
+			}
+		}
+
+		// Check if it's a player node
+		if (this.legalMoves().length >= 1) {
+			return 'player'
+		}
+
+		// If there are no hidden cards to reveal & no legal actions to take, it's terminal
+		return 'terminal';
 	}
 
 	log() {
@@ -526,23 +568,31 @@ class Solitaire {
 
 		console.groupEnd();
 	}
-	get type() {
-		// None → String ('player', 'chance', or 'terminal')
-
-		// Check if it's a chance node
-		for (const tableau of this.tableaus) {
-			if (tableau.size >= 1 && tableau.cards[tableau.size - 1].hidden) {
-				return 'chance';
-			}
-		}
-
-		// Check if it's a player node
-		if (this.legalMoves().length >= 1) {
-			return 'player'
-		}
-
-		// If there are no hidden cards to reveal & no legal actions to take, it's terminal
-		return 'terminal';
+	to_string() {
+		return `
+WASTE
+ - (${this.waste.cards.length}) : ${this.waste.to_string()}
+FOUNDATIONS
+ - (${this.foundations[0].cards.length}) : ${this.foundations[0].to_string()}
+ - (${this.foundations[1].cards.length}) : ${this.foundations[1].to_string()}
+ - (${this.foundations[2].cards.length}) : ${this.foundations[2].to_string()}
+ - (${this.foundations[3].cards.length}) : ${this.foundations[3].to_string()}
+TABLEAUS
+ - (${this.tableaus[0].cards.length}) : ${this.tableaus[0].to_string()}
+ - (${this.tableaus[1].cards.length}) : ${this.tableaus[1].to_string()}
+ - (${this.tableaus[2].cards.length}) : ${this.tableaus[2].to_string()}
+ - (${this.tableaus[3].cards.length}) : ${this.tableaus[3].to_string()}
+ - (${this.tableaus[4].cards.length}) : ${this.tableaus[4].to_string()}
+ - (${this.tableaus[5].cards.length}) : ${this.tableaus[5].to_string()}
+ - (${this.tableaus[6].cards.length}) : ${this.tableaus[6].to_string()}`;
+	}
+	clone() {
+		return new Solitaire(
+			this.waste.clone(),
+			this.tableaus.map(tableau => tableau.clone()),
+			this.foundations.map(foundation => foundation.clone()),
+			cloneDeep(this.hidden_cards),
+		);
 	}
 }
 
@@ -761,3 +811,4 @@ function SolitaireExample() {
 
 export default SolitaireExample;
 export { ReactSolitaire, ReactCard, Card, Pile, Waste, Tableau, Foundation, Solitaire, getImperfectState, getPerfectState, SUITS, PILES };
+
