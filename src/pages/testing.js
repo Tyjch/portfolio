@@ -1,8 +1,8 @@
 import React from "react"
-import { Solitaire, getImperfectState, getPerfectState } from "../components/projects/solitaire";
+import Solitaire, { getImperfectState, getPerfectState } from "../classes/solitaire";
 import GameTree, { GameTreeController } from '../components/projects/game-tree'
 
-function Example() {
+function GameTreeExample() {
 	const deck      = getPerfectState();
 	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
 
@@ -23,22 +23,11 @@ function Example() {
 	);
 }
 
-// function Example() {
-// 	const deck      = getImperfectState();
-// 	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
-//
-// 	return (
-// 		<div style={{
-// 			height          : '100vh',
-// 			width           : '100vw',
-// 			display         : 'flex',
-// 			justifyContent  : 'center',
-// 			alignItems      : 'center',
-// 			backgroundColor : 'gray',
-// 		}}>
-// 			<GameTreeController solitaire={solitaire} />
-// 		</div>
-// 	);
-// }
+function TreeControllerExample() {
+	const deck      = getImperfectState();
+	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
 
-export default Example;
+	return <GameTreeController solitaire={solitaire} />;
+}
+
+export default TreeControllerExample;

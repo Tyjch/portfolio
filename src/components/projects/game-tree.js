@@ -5,8 +5,6 @@ import cytoscape from "cytoscape";
 import dagre from 'cytoscape-dagre';
 import { ReactSolitaire } from "./solitaire";
 import styles from '../../styles/projects/game-tree.module.css';
-import {element} from "prop-types";
-import {uuid} from "cytoscape/src/util";
 
 // region Other
 cytoscape.use(dagre);
@@ -38,6 +36,8 @@ const stylesheet = [
 	{
 		selector : 'edge',
 		style : {
+			'color'                : 'white',
+			'line-color'           : '#434343',
 			'target-label'         : 'data(label)',
 			'target-arrow-shape'   : 'triangle',
 			'target-text-margin-y' : -30,
@@ -65,7 +65,7 @@ const stylesheet = [
 			'background-color' : 'red',
 		}
 	}
-]
+];
 
 function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 
@@ -102,7 +102,7 @@ function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 	// EFFECTS
 	useEffect(() => {
 		if (cy.current) {
-			cy.current.makeLayout(layout).run();
+			cy.current.makeLayout({...layout}).run();
 		}
 	}, [elements]);
 	useEffect(() => {
@@ -121,8 +121,9 @@ function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 		switch (curr_state.type) {
 			case 'player' : {
 				const next_action = next_state.legalMoves().filter(legal_move => {
-					return legal_move.card.is_equal(action.card) &&
-						legal_move.target_pile.target.is_equal(action.target_pile.target);
+					return legal_move.card.is_equal(action.card) && (
+						legal_move.target_pile.cards.length === 0 || legal_move.target_pile.target.is_equal(action.target_pile.target)
+					);
 				});
 				edge_label = `${action.card.to_string()}→${action.target_pile.target.to_string()}`;
 				next_state.applyMove(next_action[0]);
@@ -130,10 +131,12 @@ function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 			}
 			case 'chance' : {
 				const next_action = next_state.chanceOutcomes().filter(legal_card => {
+					console.log('legal_card:', legal_card);
+					console.log('action:', action);
 					return legal_card.is_equal(action);
 				})
 				edge_label = `${action.to_string()}`;
-				next_state.applyOutcome(action);
+				next_state.applyOutcome(next_action[0]);
 				break;
 			}
 			default : {
@@ -166,13 +169,19 @@ function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 	}
 	function doRecursiveStep() {
 		if (cy.current) {
+			console.group('doRecursiveStep()');
+
 			const elements_to_add = [];
 			const unvisited_nodes = cy.current.nodes(`[step = ${timestep}]`);
 
 			if (unvisited_nodes) {
+				console.groupCollapsed('unvisited_nodes');
+
 				unvisited_nodes.forEach(curr_node => {
 					const curr_state  = curr_node.data('state');
 					let legal_actions = [];
+
+					console.log('curr_state.type:', curr_state.type);
 
 					switch (curr_state.type) {
 						case 'player' : {
@@ -191,12 +200,17 @@ function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 						}
 					}
 
+					console.group('legal_actions:');
 					legal_actions.forEach(action => {
+						console.log('action:', action);
 						const [next_node, next_edge] = expandNode(curr_node, action);
 						elements_to_add.push(next_node);
 						elements_to_add.push(next_edge);
-					})
+					});
+					console.groupEnd();
 				})
+
+				console.groupEnd();
 
 				setElements([
 					...elements,
@@ -206,51 +220,49 @@ function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 			} else {
 				console.warn('Attempted to expand unvisited nodes but found none');
 			}
+			console.groupEnd();
 		}
 	}
 
 	// ELEMENTS
 	const button_element    = (<>
 		<button
-			style   = {{ margin : '10px' }}
-			onClick = {() => handleClick()}
+			className = { styles.button }
+			onClick   = { () => handleClick() }
 		>
 			Step
 		</button>
 	</>);
 	const cytoscape_element = (<>
 		<CytoscapeComponent
+			className  = { styles.cytoscape }
 			cy         = { ref => { cy.current = ref } }
 			elements   = { elements }
 			layout     = { layout }
 			stylesheet = { stylesheet }
-			style      = {{
-				minWidth  : '90vw',
-				minHeight : '90vh',
-				border : 'thin solid white'
-			}}
 		/>
 	</>);
 
 	// RENDERER
 	return (<>
-		<div style={{
-			display        : 'flex',
-			flexDirection  : 'column-reverse',
-			justifyContent : 'center',
-			alignItems     : 'center',
-		}}>
+		<div className={styles.tree}>
 			{button_element}
 			{cytoscape_element}
 		</div>
 	</>);
-
 }
 
 function GameTreeController({ solitaire }) {
 	const [state, setState] = useState(solitaire);
 
-	const solitaire_element = (<>
+	function handleNodeClick(event) {
+		console.log('handleNodeClick()');
+		const new_state = event.target.data('state');
+		console.log('new_state:', new_state.to_string());
+		setState(new_state);
+	}
+
+	let solitaire_element   = (<>
 		<ReactSolitaire
 			solitaire    = {state}
 			speed        = {1000}
@@ -264,12 +276,12 @@ function GameTreeController({ solitaire }) {
 			solitaire    = {solitaire}
 			is_recursive = {true}
 			max_depth    = {100}
-			onNodeClick  = {() => console.log('onNodeClick')}
+			onNodeClick  = {handleNodeClick}
 		/>
 	</>);
 
 	return (
-		<div style={{ display : 'flex', height : '100vh', width : '100vw'}}>
+		<div className={styles.controller}>
 			{solitaire_element}
 			{game_tree_element}
 		</div>
@@ -279,3 +291,4 @@ function GameTreeController({ solitaire }) {
 
 export default GameTree;
 export { GameTreeController };
+
