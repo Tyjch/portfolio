@@ -6,27 +6,13 @@ import dagre from 'cytoscape-dagre';
 import { ReactSolitaire } from "./solitaire";
 import styles from '../../styles/projects/game-tree.module.css';
 
-// region Other
 cytoscape.use(dagre);
-class RandomAgent {
-	choose_action(legal_actions) {
-		return random_choice(legal_actions);
-	}
-}
-function random_choice(array) {
-	return array[Math.floor(Math.random() * array.length)];
-}
-// endregion
-
 const stylesheet = [
 	{
 		selector : 'node',
 		style : {
-			// 'width'       : '120px',
-			// 'height'      : '55px',
-			'shape'       : 'round-rectangle',
-			'label'       : '',
-			// 'font-size'          : '3',
+			'shape'              : 'round-rectangle',
+			'label'              : '',
 			'text-valign'        : 'center',
 			'text-halign'        : 'center',
 			'text-wrap'          : 'wrap',
@@ -79,6 +65,7 @@ function GameTree({ solitaire, is_recursive, max_depth, onNodeClick }) {
 		fit     : true,
 		rankSep : 200,
 		nodeDimensionsIncludeLabels : true,
+		rankDir : 'LR',
 	}
 
 	// STATES

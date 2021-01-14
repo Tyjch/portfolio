@@ -70,7 +70,7 @@ function Coder(props) {
         afterComplete    : (step, instance) => {
           // console.log('%cafterComplete()', 'color:blue');
           setRunning(false);
-          instance.destroy();
+          //instance.destroy();
         },
       });
 

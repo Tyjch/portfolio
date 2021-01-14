@@ -31,15 +31,15 @@
 
 .content {
     display               : grid;
-    grid-template-columns : 40% 60%; /*repeat(2, 50%);*/
+    grid-template-columns : /*40% 60%;*/ repeat(2, 50%);
     text-align            : center;
 }
 
 .article {
     background-color : #131313;
     text-align       : left;
-    padding          : 50px 60px 50px 40px;
-    /*max-width        : 800px;*/
+    padding          : 50px 60px 80vh 40px;
+
 }
 
 .sidebar {

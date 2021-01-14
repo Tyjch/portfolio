@@ -43,15 +43,19 @@ function Paragraph({ example, onEnter, children }) {
             bottomOffset = {'90%'}
             onEnter = {() => {
               handleEnter();
-              setContent(example);
-              if (typeof(onEnter) === 'function') {
-                onEnter(content);
+              try {
+                setContent(example);
+              } catch (e) {
+                setContent(content);
               }
+              
+              // if (typeof(onEnter) === 'function') {
+              //   onEnter(content);
+              // }
             }}
             onLeave = {() => {
               handleLeave();
             }}
-
           >
             <motion.div
               animate  = {isActive ? 'active' : 'inactive'}
@@ -96,7 +100,11 @@ function Article(props) {
   }
 
   function updateContent(newContent) {
-    setContent(newContent);
+    try {
+      setContent(newContent);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return (
