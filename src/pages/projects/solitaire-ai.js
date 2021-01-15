@@ -1,7 +1,6 @@
 import React from "react"
 import Article, { Paragraph, Section } from "../../components/article"
-import { ReactSolitaire } from '../../components/projects/solitaire'
-import Solitaire, { getPerfectState } from "../../classes/solitaire";
+import Solitaire, { getPerfectState } from "../../classes/games/solitaire";
 import SolitaireAIData from "../../../content/projects/solitaire-ai.yaml"
 import Lorem from "react-lorem-component";
 
@@ -15,22 +14,13 @@ function SolitaireAI() {
   const deck = getPerfectState();
   const examples = {
     introduction : (
-      <ReactSolitaire
-        solitaire    = { new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards) }
-        interactive  = {false}
-        controllable = {false}
-        autorun      = {true}
-        speed        = {300}
-      />
+      <p> Introduction </p>
     ),
     game_tree    : (
       <p> Compare game trees with perfect information vs. imperfect information </p>
     ),
     piles        : (
-      <Coder
-        language = {'lang-js'}
-        code     = {`console.log('Piles');`}
-      />
+      <p> Piles </p>
     ),
   }
 

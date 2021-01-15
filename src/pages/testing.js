@@ -1,10 +1,9 @@
-import React from "react"
-import Solitaire, { getImperfectState, getPerfectState } from "../classes/solitaire";
-import GameTree, { GameTreeController } from '../components/projects/game-tree'
+import React from "react";
+import TicTacToeState, { ActionFormatter } from "../classes/games/tictactoe";
+import GameController from "../components/projects/game-controller";
 
-function GameTreeExample() {
-	const deck      = getPerfectState();
-	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
+function Example() {
+	const initial_game = new TicTacToeState();
 
 	return (
 		<div style={{
@@ -14,20 +13,9 @@ function GameTreeExample() {
 			alignItems      : 'center',
 			backgroundColor : 'gray',
 		}}>
-			<GameTree
-				solitaire    = {solitaire}
-				is_recursive = {true}
-				max_depth    = {100}
-			/>
+			<GameController initial_game = {initial_game} />
 		</div>
 	);
 }
 
-function TreeControllerExample() {
-	const deck      = getImperfectState();
-	const solitaire = new Solitaire(deck.waste, deck.tableaus, deck.foundations, deck.hidden_cards);
-
-	return <GameTreeController solitaire={solitaire} />;
-}
-
-export default TreeControllerExample;
+export default Example;
